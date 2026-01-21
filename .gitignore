@@ -1,41 +1,22 @@
-# Prerequisites
-*.d
+#共通無視フォルダ
+[Rr]elease/
+packages/
+Library/
+.vs
+x64
+project
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
+#共通無視拡張子
+*.tlog
 *.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Linker files
-*.ilk
-
-# Debugger Files
 *.pdb
+*.ilk
+*.idb
+*.log
+*.ipch
+*.opendb
+*.db
+*.suo
+*.inc
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-
-# debug information files
-*.dwo
+imgui.ini

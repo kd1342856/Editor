@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "../ECS/Component.h"
 
 class RenderComponent : public Component
 {

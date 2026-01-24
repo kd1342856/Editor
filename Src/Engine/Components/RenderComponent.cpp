@@ -1,6 +1,4 @@
 ﻿#include "RenderComponent.h"
-#include "TransformComponent.h"
-#include "../ECS/Entity.h"
 
 void RenderComponent::Init()
 {
@@ -17,6 +15,13 @@ void RenderComponent::DrawLit()
 		{
 			if(m_modelWork)
 			{
+				// 非同期ロードでモデルデータの中身が入れ替わった場合、
+				// Work側のノードリストとサイズが合わなくなるので再セットアップする
+				if (m_modelWork->GetNodes().size() != m_modelWork->GetDataNodes().size())
+				{
+					m_modelWork->SetModelData(m_modelWork->GetData());
+				}
+
 				KdShaderManager::Instance().m_StandardShader.DrawModel(*m_modelWork, transform->GetWorldMatrix());
 			}
 			
@@ -39,13 +44,13 @@ void RenderComponent::SetModel(const std::string& filePath)
         return;
     }
 
-	// 静的データを読み込む
-	m_modelData = std::make_shared<KdModelData>();
-	m_modelData->Load(filePath);
+	// KdAssetsからデータを取得 (非同期ロード対応)
+	m_modelData = KdAssets::Instance().m_modeldatas.GetData(filePath);
+
 	// ダイナミックの場合のみWorkを
 	if (m_isDynamic)
 	{
 		m_modelWork = std::make_shared<KdModelWork>();
-		m_modelWork->SetModelData(filePath);
+		m_modelWork->SetModelData(m_modelData);
 	}
 }

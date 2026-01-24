@@ -31,6 +31,19 @@ bool KdModelData::Load(std::string_view filename)
 	return true;
 }
 
+void KdModelData::Swap(KdModelData& other)
+{
+	using std::swap;
+	swap(m_materials, other.m_materials);
+	swap(m_spAnimations, other.m_spAnimations);
+	swap(m_originalNodes, other.m_originalNodes);
+	swap(m_rootNodeIndices, other.m_rootNodeIndices);
+	swap(m_boneNodeIndices, other.m_boneNodeIndices);
+	swap(m_meshNodeIndices, other.m_meshNodeIndices);
+	swap(m_collisionMeshNodeIndices, other.m_collisionMeshNodeIndices);
+	swap(m_drawMeshNodeIndices, other.m_drawMeshNodeIndices);
+}
+
 // ノード作成
 void KdModelData::CreateNodes(const std::shared_ptr<KdGLTFModel>& spGltfModel)
 {

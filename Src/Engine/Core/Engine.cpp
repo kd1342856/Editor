@@ -1,6 +1,38 @@
 ﻿#include "Engine.h"
 #include "../Scene/SceneManager.h"
 #include "../ImGui/ImGuiManager.h"
+#include "Thread/ThreadManager.h"
+#include "Thread/Asset/AsyncAssetLoader.h"
+#include "Thread/Profiler/Profiler.h"
+
+int WINAPI WinMain(_In_ HINSTANCE, _In_opt_  HINSTANCE, _In_ LPSTR, _In_ int)
+{
+	// メモリリークを知らせる
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	// COM初期化
+	if (FAILED(CoInitializeEx(nullptr, COINIT_MULTITHREADED)))
+	{
+		CoUninitialize();
+
+		return 0;
+	}
+
+	// mbstowcs_s関数で日本語対応にするために呼ぶ
+	setlocale(LC_ALL, "japanese");
+
+	//===================================================================
+	// 実行
+	//===================================================================
+	// Engine初期化 & 実行
+
+	Engine::Instance().Execute();
+
+	// COM解放
+	CoUninitialize();
+
+	return 0;
+}
 
 bool Engine::Init(int width, int height)
 {
@@ -20,10 +52,6 @@ bool Engine::Init(int width, int height)
 //		bFullScreen = true;
 //	}
 
-	//===================================================================
-	// Direct3D初期化
-	//===================================================================
-
 	// デバイスのデバッグモードを有効にする
 	bool deviceDebugMode = false;
 #ifdef _DEBUG
@@ -32,13 +60,15 @@ bool Engine::Init(int width, int height)
 
 	// Direct3D初期化
 	std::string errorMsg;
-	if (KdDirect3D::Instance().Init(m_window.GetWndHandle(), width, height, deviceDebugMode, errorMsg) == false) {
+	if (KdDirect3D::Instance().Init(m_window.GetWndHandle(), width, height, deviceDebugMode, errorMsg) == false)
+	{
 		MessageBoxA(m_window.GetWndHandle(), errorMsg.c_str(), "Direct3D初期化失敗", MB_OK | MB_ICONSTOP);
 		return false;
 	}
 
 	// フルスクリーン設定
-	if (bFullScreen) {
+	if (bFullScreen) 
+	{
 		HRESULT hr;
 
 		hr = KdDirect3D::Instance().SetFullscreenState(TRUE, 0);
@@ -49,20 +79,32 @@ bool Engine::Init(int width, int height)
 		}
 	}
 
-	//===================================================================
 	// imgui初期化
-	//===================================================================
 	ImGuiManager::Instance().GuiInit();
 
-	//===================================================================
 	// シェーダー初期化
-	//===================================================================
 	KdShaderManager::Instance().Init();
 
-	//===================================================================
 	// オーディオ初期化
-	//===================================================================
 	KdAudioManager::Instance().Init();
+
+	// スレッドプール初期化
+	ThreadManager::Instance().Init();
+	
+	// 非同期ローダー初期化
+	AsyncAssetLoader::Instance().Init();
+
+	// 非同期テクスチャロードをKdAssetsに登録
+	KdAssets::Instance().m_textures.SetCustomLoader([](const std::string& filename)
+	{
+		return AsyncAssetLoader::Instance().LoadTextureAsync(filename);
+	});
+
+	// 非同期モデルロードをKdAssetsに登録
+	KdAssets::Instance().m_modeldatas.SetCustomLoader([](const std::string& filename)
+	{
+		return AsyncAssetLoader::Instance().LoadModelAsync(filename);
+	});
 
 	return true;
 }
@@ -96,7 +138,8 @@ void Engine::Execute()
 	//===================================================================
 	// 初期設定(ウィンドウ作成、Direct3D初期化など)
 	//===================================================================
-	if (Engine::Instance().Init(atoi(sizeData[0].c_str()), atoi(sizeData[1].c_str())) == false) {
+	if (Engine::Instance().Init(atoi(sizeData[0].c_str()), atoi(sizeData[1].c_str())) == false) 
+	{
 		return;
 	}
 
@@ -105,6 +148,7 @@ void Engine::Execute()
 
 	while (true)
 	{
+		Profiler::Instance().ResetFrame();
 		fpsCtrl.UpdateStartTime();
 
 		if (m_endFlag) break;
@@ -121,11 +165,9 @@ void Engine::Execute()
 			}
 		}
 
-		//=========================================
-		//
+		
 		// アプリケーション更新処理
-		//
-		//=========================================
+		
 
 		KdBeginUpdate();
 		{
@@ -137,11 +179,9 @@ void Engine::Execute()
 		}
 		KdPostUpdate();
 
-		//=========================================
-		//
+		
 		// アプリケーション描画処理
-		//
-		//=========================================
+		
 
 		KdBeginDraw();
 		{
@@ -165,13 +205,12 @@ void Engine::Release()
 	if (m_isReleased) return;
 
 	SceneManager::Instance().Release();
-	
-	// Release ImGui before D3D
 	ImGuiManager::Instance().GuiRelease();
-
 	KdShaderManager::Instance().Release();
 	KdAudioManager::Instance().Release();
 	KdDirect3D::Instance().Release();
+	AsyncAssetLoader::Instance().Release();
+	ThreadManager::Instance().Release();
 	m_window.Release();
 
 	m_isReleased = true;
@@ -182,7 +221,11 @@ void Engine::KdBeginUpdate()
 	// 入力状況の更新
 	KdInputManager::Instance().Update();
 
+	// 非同期ローダー更新
+	AsyncAssetLoader::Instance().Update();
+
 	// 空間環境の更新
+	KdShaderManager::Instance().WorkAmbientController().Update();
 	KdShaderManager::Instance().WorkAmbientController().Update();
 }
 
@@ -216,6 +259,7 @@ void Engine::PreUpdate()
 
 void Engine::Update()
 {
+	PROFILE_FUNCTION();
 	SceneManager::Instance().Update();
 }
 
@@ -232,6 +276,7 @@ void Engine::PreDraw()
 
 void Engine::Draw()
 {
+	PROFILE_FUNCTION();
 	SceneManager::Instance().Draw();
 }
 
@@ -242,6 +287,8 @@ void Engine::DrawSprite()
 
 void Engine::PostDraw()
 {	
+	PROFILE_FUNCTION();
+
 	// 画面のぼかしや被写界深度処理の実施
 	KdShaderManager::Instance().m_postProcessShader.PostEffectProcess();
 

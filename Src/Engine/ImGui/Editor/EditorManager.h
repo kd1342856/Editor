@@ -1,17 +1,11 @@
 ﻿#pragma once
-
-#include "../../ECS/Entity.h"
-#include "../../../Framework/Shader/KdRenderTargetChange.h"
-#include "EditorCamera/EditorCamera.h"
-#include <filesystem>
-
-// 最小限のエディタマネージャ
 // - エンティティリストの管理
 // - 選択状態のハンドリング
 // - ギズモとUIの描画
 
 class CameraBase;
 class EditorScene;
+class EditorCamera;
 
 class EditorManager
 {
@@ -61,4 +55,9 @@ private:
     // ゲームビュー用レンダーターゲット
     KdRenderTargetPack m_gameRT;
     KdRenderTargetChanger m_rtChanger;
+
+    // ImGuizmo
+    int m_gizmoType = -1; // -1: None, or ImGuizmo::TRANSLATE etc.
+    bool m_isGizmoUsing = false;
+    Math::Matrix m_gizmoStartMatrix; // ドラッグ開始時の行列
 };

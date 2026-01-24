@@ -32,6 +32,9 @@ public:
 
 	bool Load(std::string_view filename);
 
+	// 他のモデルデータと中身を入れ替える
+	void Swap(KdModelData& other);
+
 	void CreateNodes(const std::shared_ptr<KdGLTFModel>& spGltfModel);									// ノード作成
 	void CreateMaterials(const std::shared_ptr<KdGLTFModel>& spGltfModel, const  std::string& fileDir);	// マテリアル作成
 	void CreateAnimations(const std::shared_ptr<KdGLTFModel>& spGltfModel);								// アニメーション作成

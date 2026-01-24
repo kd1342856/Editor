@@ -47,6 +47,8 @@
 #include <atomic>
 #include <mutex>
 #include <future>
+#include <condition_variable>
+#include <chrono>
 #include <fileSystem>
 
 //===============================================
@@ -108,6 +110,7 @@
 #include "imgui/imgui_impl_win32.h"
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_stdlib.h"
+#include "imgui/ImGuizmo.h"
 
 // const char8_t*をconst char*として扱うマクロ(c++20から使えなくなってるので)
 #if defined(__cpp_char8_t)
@@ -122,3 +125,4 @@
 //
 //===============================================
 #include "Framework/KdFramework.h"
+#include "Engine/EnginePch.h"

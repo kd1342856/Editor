@@ -1,6 +1,5 @@
 ﻿#include "SceneManager.h"
 #include "Scene.h"
-#include "../ECS/Entity.h"
 
 void SceneManager::Init()
 {

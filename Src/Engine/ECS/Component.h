@@ -26,6 +26,11 @@ public:
 	void SetOwner(const std::shared_ptr<Entity>& owner) { m_owner = owner; }
 	std::shared_ptr<Entity> GetOwner() const { return m_owner.lock(); }
 
+	// Enable/Disable
+	void SetEnable(bool enable) { m_enable = enable; }
+	bool IsEnable() const { return m_enable; }
+
 protected:
 	std::weak_ptr<Entity> m_owner;
+	bool m_enable = true;
 };

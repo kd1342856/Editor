@@ -106,20 +106,20 @@
     <Filter Include="Src\Engine\Serializer">
       <UniqueIdentifier>{2d81e9c7-8e0a-4f4d-8069-72ab264d4fdb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Engine\Data">
-      <UniqueIdentifier>{15096b14-45ae-43d2-8a6a-846a50285852}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Engine\Data\Loader">
-      <UniqueIdentifier>{8cd8eb27-956f-4144-bce8-27978ac1ea21}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Engine\Data\Loader\Manifest">
-      <UniqueIdentifier>{dc1f2e12-95c5-4f2c-a653-ad94d01881cb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Engine\Data\Loader\ObjData">
-      <UniqueIdentifier>{59b1f86e-dede-4e46-9f95-4c3b635ed0c6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Framework\Utility\KdDebug">
       <UniqueIdentifier>{7e252f42-0953-43c7-a98c-20e6c51bdebc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Engine\ImGui\Editor\Command">
+      <UniqueIdentifier>{499d64ee-af07-4381-8411-13a6455a7bb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Engine\Core\Thread">
+      <UniqueIdentifier>{be50c04e-41cd-4747-ae4f-c107e3a94979}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Engine\Core\Thread\Profiler">
+      <UniqueIdentifier>{cb018afb-4105-4620-a8f3-98bf3fd3e53d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Engine\Core\Thread\Asset">
+      <UniqueIdentifier>{aa044ea9-0aca-41a2-a176-76fb1224315a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -137,9 +137,6 @@
     </ClInclude>
     <ClInclude Include="..\Library\tinygltf\tiny_gltf.h">
       <Filter>Library\tinygltf</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\main.h">
-      <Filter>Src\Application</Filter>
     </ClInclude>
     <ClInclude Include="src\Framework\Direct3D\KdDirect3D.h">
       <Filter>Src\Framework\Direct3D</Filter>
@@ -330,25 +327,37 @@
     <ClInclude Include="Src\Engine\Serializer\SceneSerializer.h">
       <Filter>Src\Engine\Serializer</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Engine\Data\Loader\Manifest\ManifestLoader.h">
-      <Filter>Src\Engine\Data\Loader\Manifest</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Engine\Data\Loader\ObjData\ObjData.h">
-      <Filter>Src\Engine\Data\Loader\ObjData</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Framework\Utility\KdDebug\KdDebugWireFrame.h">
       <Filter>Src\Framework\Utility\KdDebug</Filter>
     </ClInclude>
     <ClInclude Include="Src\Engine\Components\ColliderComponent.h">
       <Filter>Src\Engine\Components</Filter>
     </ClInclude>
+    <ClInclude Include="..\Library\imgui\ImGuizmo.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\ImGui\Editor\Command\CmdTransform.h">
+      <Filter>Src\Engine\ImGui\Editor\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\ImGui\Editor\Command\CommandBase.h">
+      <Filter>Src\Engine\ImGui\Editor\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\ImGui\Editor\Command\CommandManager.h">
+      <Filter>Src\Engine\ImGui\Editor\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\Core\Thread\ThreadManager.h">
+      <Filter>Src\Engine\Core\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\Core\Thread\Profiler\Profiler.h">
+      <Filter>Src\Engine\Core\Thread\Profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\Core\Thread\Asset\AsyncAssetLoader.h">
+      <Filter>Src\Engine\Core\Thread\Asset</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
       <Filter>Src</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\main.cpp">
-      <Filter>Src\Application</Filter>
     </ClCompile>
     <ClCompile Include="src\Framework\Direct3D\KdDirect3D.cpp">
       <Filter>Src\Framework\Direct3D</Filter>
@@ -506,12 +515,6 @@
     <ClCompile Include="Src\Engine\Serializer\SceneSerializer.cpp">
       <Filter>Src\Engine\Serializer</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Engine\Data\Loader\Manifest\ManifestLoader.cpp">
-      <Filter>Src\Engine\Data\Loader\Manifest</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Engine\Data\Loader\ObjData\ObjData.cpp">
-      <Filter>Src\Engine\Data\Loader\ObjData</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Engine\Components\TransformComponent.cpp">
       <Filter>Src\Engine\Components</Filter>
     </ClCompile>
@@ -523,6 +526,18 @@
     </ClCompile>
     <ClCompile Include="Src\Engine\Components\ColliderComponent.cpp">
       <Filter>Src\Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\ImGuizmo.cpp">
+      <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Engine\Core\Thread\ThreadManager.cpp">
+      <Filter>Src\Engine\Core\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Engine\Core\Thread\Profiler\Profiler.cpp">
+      <Filter>Src\Engine\Core\Thread\Profiler</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Engine\Core\Thread\Asset\AsyncAssetLoader.cpp">
+      <Filter>Src\Engine\Core\Thread\Asset</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

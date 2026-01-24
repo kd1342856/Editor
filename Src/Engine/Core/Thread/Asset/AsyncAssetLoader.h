@@ -1,0 +1,54 @@
+#pragma once
+#include "../ThreadManager.h"
+
+// 非同期アセットローダー
+// ・別スレッドでのアセット読み込みを管理する
+class AsyncAssetLoader
+{
+public:
+
+	static AsyncAssetLoader& Instance()
+	{
+		static AsyncAssetLoader instance;
+		return instance;
+		}
+
+	// 初期化
+	void Init();
+	
+	// 更新 (非同期ロード完了時の同期処理など)
+	void Update();
+
+	// 解放
+	void Release();
+
+	// テクスチャの非同期ロード
+	// ・戻り値：KdTextureへのスマートポインタ
+	// ・読み込み完了までは「1x1の白テクスチャ」が入っている
+	// ・キャッシュがあればそれを返す
+	std::shared_ptr<KdTexture> LoadTextureAsync(const std::string& filename, Job::Priority priority = Job::Priority::Normal);
+
+	// モデルの非同期ロード
+	// ・戻り値：KdModelDataへのスマートポインタ
+	// ・読み込み完了までは「空のモデル」が入っている
+	// ・キャッシュがあればそれを返す
+	std::shared_ptr<KdModelData> LoadModelAsync(const std::string& filename, Job::Priority priority = Job::Priority::Normal);
+
+private:
+	AsyncAssetLoader() {}
+	~AsyncAssetLoader() { Release(); }
+
+	// 白テクスチャ取得 (プレースホルダー用)
+	ID3D11ShaderResourceView* GetWhiteTex();
+
+	// テクスチャキャッシュ (ファイルパス -> テクスチャ)
+	// weak_ptrにしておき、使われなくなったら自動解放されるようにする
+	std::map<std::string, std::weak_ptr<KdTexture>> m_textureCache;
+	std::map<std::string, std::weak_ptr<KdModelData>> m_modelCache;
+	
+	// コールバックリクエスト
+	// スレッドからメインスレッドに処理を依頼するためのキュー
+	// (テクスチャ差し替えなど)
+	std::mutex m_callbackMutex;
+	std::vector<std::function<void()>> m_completionCallbacks;
+};

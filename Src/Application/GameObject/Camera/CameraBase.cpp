@@ -1,5 +1,4 @@
 ﻿#include "CameraBase.h"
-#include "../../../Engine/EnginePch.h" // Needed for Entity definition if not PCH
 
 void CameraBase::Init()
 {

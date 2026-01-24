@@ -1,9 +1,6 @@
 ﻿#pragma once
-
-#include "Component.h"
 #include <typeindex>
 
-// Entity: Container for Components
 class Entity : public std::enable_shared_from_this<Entity>
 {
 public:

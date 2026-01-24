@@ -1,5 +1,4 @@
 ﻿#include "Entity.h"
-#include "../Components/TransformComponent.h"
 
 void Entity::Init()
 {
@@ -14,6 +13,7 @@ void Entity::Update()
 	if (!m_visible) return;
 	for (auto& [type, comp] : m_components)
 	{
+		if (!comp->IsEnable()) continue;
 		comp->Update();
 	}
 }
@@ -23,6 +23,7 @@ void Entity::PostUpdate()
 	if (!m_visible) return;
 	for (auto& [type, comp] : m_components)
 	{
+		if (!comp->IsEnable()) continue;
 		comp->PostUpdate();
 	}
 }
@@ -32,6 +33,7 @@ void Entity::PreDraw()
 	if (!m_visible) return;
 	for (auto& [type, comp] : m_components)
 	{
+		if (!comp->IsEnable()) continue;
 		comp->PreDraw();
 	}
 }
@@ -41,6 +43,7 @@ void Entity::DrawLit()
 	if (!m_visible || !IsVisible(VisibilityFlags::Lit)) return;
 	for (auto& [type, comp] : m_components)
 	{
+		if (!comp->IsEnable()) continue;
 		comp->DrawLit();
 	}
 }
@@ -50,6 +53,7 @@ void Entity::DrawUnLit()
 	if (!m_visible || !IsVisible(VisibilityFlags::UnLit)) return;
 	for (auto& [type, comp] : m_components)
 	{
+		if (!comp->IsEnable()) continue;
 		comp->DrawUnLit();
 	}
 }
@@ -59,6 +63,7 @@ void Entity::DrawBright()
 	if (!m_visible || !IsVisible(VisibilityFlags::Bright)) return;
 	for (auto& [type, comp] : m_components)
 	{
+		if (!comp->IsEnable()) continue;
 		comp->DrawBright();
 	}
 }
@@ -68,6 +73,7 @@ void Entity::GenerateDepthMapFromLight()
 	if (!m_visible || !IsVisible(VisibilityFlags::Shadow)) return;
 	for (auto& [type, comp] : m_components)
 	{
+		if (!comp->IsEnable()) continue;
 		comp->GenerateDepthMapFromLight();
 	}
 }
@@ -77,6 +83,7 @@ void Entity::DrawSprite()
 	if (!m_visible) return;
 	for (auto& [type, comp] : m_components)
 	{
+		if (!comp->IsEnable()) continue;
 		comp->DrawSprite();
 	}
 }
@@ -122,6 +129,7 @@ void Entity::DrawDebug()
 	if (!m_visible) return;
 	for (auto& [type, comp] : m_components)
 	{
+		if (!comp->IsEnable()) continue;
 		comp->DrawDebug();
 	}
 }

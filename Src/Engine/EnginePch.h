@@ -7,7 +7,7 @@
 
 // ImGui
 #include "ImGui/ImGuiManager.h"
-#include "ImGui/Editor/EditorManager.h"
+#include "ImGui/Log/Logger.h"
 
 
 // Engine Core Layout
@@ -18,10 +18,7 @@
 
 #include "Components/RenderComponent.h"
 #include "Components/TransformComponent.h"
-
-// Scene
-#include "Scene/Scene.h"
-#include "Scene/SceneManager.h"
+#include "Components/ColliderComponent.h"
 
 // System
 #include "Core/Engine.h"

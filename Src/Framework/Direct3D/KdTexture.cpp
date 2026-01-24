@@ -464,6 +464,7 @@ void KdTexture::Release()
 	KdSafeRelease(m_rtv);
 	KdSafeRelease(m_dsv);
 
+
 	m_filepath = "";
 }
 

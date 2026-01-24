@@ -11,14 +11,6 @@ public:
 
 private:
 
-	void KdPostDraw();
-	void KdBeginDraw(bool usePostProcess);
-	void KdPostUpdate();
-	void KdBeginUpdate();
-
-	// ゲーム終了フラグ trueで終了する
-	bool		m_endFlag = false;
-
 //=====================================================
 // シングルトンパターン
 //=====================================================

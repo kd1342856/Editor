@@ -1,5 +1,4 @@
-﻿#include "../../EnginePch.h"
-#include "Logger.h"
+﻿#include "Logger.h"
 
 static ImGuiTextBuffer     Buf;
 static ImGuiTextFilter     Filter;
@@ -65,6 +64,8 @@ void Logger::DrawAddLog()
 
 void Logger::Add(const char* fmt, ...)
 {
+	std::lock_guard<std::mutex> lock(s_mutex);
+
 	int old_size = Buf.size();
 	va_list args;
 	va_start(args, fmt);

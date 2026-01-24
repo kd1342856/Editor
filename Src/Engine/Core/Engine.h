@@ -3,11 +3,6 @@
 class Engine
 {
 public:
-	static Engine& Instance()
-	{
-		static Engine instance;
-		return instance;
-	}
 
 	bool Init(int width, int height);
 	void Execute();
@@ -47,4 +42,11 @@ private:
 	bool m_isReleased = false;
 	int m_windowWidth = 1280;
 	int m_windowHeight = 720;
+
+public:
+	static Engine& Instance()
+	{
+		static Engine instance;
+		return instance;
+	}
 };

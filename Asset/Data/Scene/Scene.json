@@ -1,0 +1,127 @@
+{
+    "EditorCamera": {
+        "Position": [
+            1.3009169101715088,
+            1.0187257528305054,
+            -3.9026079177856445
+        ],
+        "Rotation": [
+            43.39999008178711,
+            700.000244140625,
+            0.0
+        ]
+    },
+    "Entities": [
+        {
+            "Name": "TestCube",
+            "Render": {
+                "IsDynamic": false,
+                "ModelPath": ""
+            },
+            "Transform": {
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "Collider": {
+                "BoxExtents": [
+                    0.5,
+                    0.5,
+                    0.5
+                ],
+                "CollisionType": 1,
+                "DebugDraw": true,
+                "Enable": true,
+                "EnableBox": false,
+                "EnableModel": true,
+                "EnableSphere": false,
+                "Offset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "SphereRadius": 1.0
+            },
+            "Name": "London",
+            "Render": {
+                "IsDynamic": false,
+                "ModelPath": "Asset/Models/Stage/London/london_white_city_gltf/scene.gltf"
+            },
+            "Transform": {
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "Collider": {
+                "BoxExtents": [
+                    0.5,
+                    0.5,
+                    0.5
+                ],
+                "CollisionType": 2,
+                "DebugDraw": true,
+                "Enable": true,
+                "EnableBox": true,
+                "EnableModel": false,
+                "EnableSphere": true,
+                "Offset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "SphereRadius": 1.0
+            },
+            "Name": "Player",
+            "Render": {
+                "IsDynamic": true,
+                "ModelPath": "Asset/Models/Character/SkinMeshMan/SkinMeshMan.gltf"
+            },
+            "Transform": {
+                "Position": [
+                    -0.6844896078109741,
+                    -2.160825252532959,
+                    0.19372671842575073
+                ],
+                "Rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "Scale": [
+                    1.1128000020980835,
+                    1.1128000020980835,
+                    1.1128000020980835
+                ]
+            }
+        }
+    ],
+    "Scene": "Untitled"
+}

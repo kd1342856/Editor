@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // アセットを取り出し可能な状態で保持するクラス
 // ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
@@ -14,11 +15,29 @@ public:
 	KdDataStorage() {}
 	~KdDataStorage() { ClearData(true); }
 
+	// カスタムローダーの設定
+	void SetCustomLoader(std::function<std::shared_ptr<DataType>(const std::string&)> loader)
+	{
+		m_customLoader = loader;
+	}
+
 	// 各アセットの読込・取得関数
 	// ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 	// 強制的にデータを読み込ませて更新する
 	std::shared_ptr<DataType> LoadData(std::string_view fileName)
 	{
+		// カスタムローダーがあればそれを使う
+		if (m_customLoader)
+		{
+			std::shared_ptr<DataType> newData = m_customLoader(fileName.data());
+			if (newData)
+			{
+				m_spDatas[fileName.data()] = newData;
+				return newData;
+			}
+			// カスタムローダーがnullを返した場合は通常のロードを試みる、またはエラー
+		}
+
 		std::shared_ptr<DataType> newData = std::make_shared<DataType>();
 
 		if (!newData->Load(fileName))
@@ -80,6 +99,7 @@ public:
 
 private:
 	std::unordered_map<std::string, std::shared_ptr<DataType>> m_spDatas;
+	std::function<std::shared_ptr<DataType>(const std::string&)> m_customLoader;
 };
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////

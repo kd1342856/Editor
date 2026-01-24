@@ -260,6 +260,7 @@
   <ItemGroup>
     <ClInclude Include="..\Library\imgui\imconfig.h" />
     <ClInclude Include="..\Library\imgui\imgui.h" />
+    <ClInclude Include="..\Library\imgui\ImGuizmo.h" />
     <ClInclude Include="..\Library\imgui\imgui_impl_dx11.h" />
     <ClInclude Include="..\Library\imgui\imgui_impl_win32.h" />
     <ClInclude Include="..\Library\imgui\imgui_internal.h" />
@@ -274,17 +275,20 @@
     <ClInclude Include="..\Library\tinygltf\stb_image_write.h" />
     <ClInclude Include="..\Library\tinygltf\tiny_gltf.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\CameraBase.h" />
-    <ClInclude Include="Src\Application\main.h" />
     <ClInclude Include="Src\Engine\Components\ColliderComponent.h" />
     <ClInclude Include="Src\Engine\Components\RenderComponent.h" />
     <ClInclude Include="Src\Engine\Components\TransformComponent.h" />
     <ClInclude Include="Src\Engine\Core\Engine.h" />
-    <ClInclude Include="Src\Engine\Data\Loader\Manifest\ManifestLoader.h" />
-    <ClInclude Include="Src\Engine\Data\Loader\ObjData\ObjData.h" />
+    <ClInclude Include="Src\Engine\Core\Thread\Asset\AsyncAssetLoader.h" />
+    <ClInclude Include="Src\Engine\Core\Thread\Profiler\Profiler.h" />
+    <ClInclude Include="Src\Engine\Core\Thread\ThreadManager.h" />
     <ClInclude Include="Src\Engine\ECS\Component.h" />
     <ClInclude Include="Src\Engine\ECS\Entity.h" />
     <ClInclude Include="Src\Engine\EnginePch.h" />
     <ClInclude Include="Src\Engine\ImGui\Debug\Animation\ImGuiAnimeDebug.h" />
+    <ClInclude Include="Src\Engine\ImGui\Editor\Command\CmdTransform.h" />
+    <ClInclude Include="Src\Engine\ImGui\Editor\Command\CommandBase.h" />
+    <ClInclude Include="Src\Engine\ImGui\Editor\Command\CommandManager.h" />
     <ClInclude Include="Src\Engine\ImGui\Editor\EditorCamera\EditorCamera.h" />
     <ClInclude Include="Src\Engine\ImGui\Editor\EditorManager.h" />
     <ClInclude Include="Src\Engine\ImGui\Editor\EditorMode.h" />
@@ -334,6 +338,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Library\imgui\imgui.cpp" />
+    <ClCompile Include="..\Library\imgui\ImGuizmo.cpp" />
     <ClCompile Include="..\Library\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\Library\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\Library\imgui\imgui_impl_dx11.cpp" />
@@ -342,13 +347,13 @@
     <ClCompile Include="..\Library\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Library\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\CameraBase.cpp" />
-    <ClCompile Include="Src\Application\main.cpp" />
     <ClCompile Include="Src\Engine\Components\ColliderComponent.cpp" />
     <ClCompile Include="Src\Engine\Components\RenderComponent.cpp" />
     <ClCompile Include="Src\Engine\Components\TransformComponent.cpp" />
     <ClCompile Include="Src\Engine\Core\Engine.cpp" />
-    <ClCompile Include="Src\Engine\Data\Loader\Manifest\ManifestLoader.cpp" />
-    <ClCompile Include="Src\Engine\Data\Loader\ObjData\ObjData.cpp" />
+    <ClCompile Include="Src\Engine\Core\Thread\Asset\AsyncAssetLoader.cpp" />
+    <ClCompile Include="Src\Engine\Core\Thread\Profiler\Profiler.cpp" />
+    <ClCompile Include="Src\Engine\Core\Thread\ThreadManager.cpp" />
     <ClCompile Include="Src\Engine\ECS\Entity.cpp" />
     <ClCompile Include="Src\Engine\ImGui\Debug\Animation\ImGuiAnimeDebug.cpp" />
     <ClCompile Include="Src\Engine\ImGui\Editor\EditorCamera\EditorCamera.cpp" />

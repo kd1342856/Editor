@@ -1,8 +1,6 @@
 ﻿#include "ImGuiManager.h"
 #include "../Scene/SceneManager.h"
 #include "Editor/EditorManager.h"
-#include "Log/Logger.h"
-#include "../EnginePch.h"
 
 void ImGuiManager::GuiInit()
 {

@@ -258,8 +258,11 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Library\imgui\dirent\dirent.h" />
     <ClInclude Include="..\Library\imgui\imconfig.h" />
     <ClInclude Include="..\Library\imgui\imgui.h" />
+    <ClInclude Include="..\Library\imgui\ImGuiFileDialog.h" />
+    <ClInclude Include="..\Library\imgui\ImGuiFileDialogConfig.h" />
     <ClInclude Include="..\Library\imgui\ImGuizmo.h" />
     <ClInclude Include="..\Library\imgui\imgui_impl_dx11.h" />
     <ClInclude Include="..\Library\imgui\imgui_impl_win32.h" />
@@ -269,12 +272,21 @@
     <ClInclude Include="..\Library\imgui\imstb_textedit.h" />
     <ClInclude Include="..\Library\imgui\imstb_truetype.h" />
     <ClInclude Include="..\Library\imgui\ja_glyph_ranges.h" />
+    <ClInclude Include="..\Library\imgui\stb_image.h" />
     <ClInclude Include="..\Library\strconv.h" />
     <ClInclude Include="..\Library\tinygltf\json.hpp" />
     <ClInclude Include="..\Library\tinygltf\stb_image.h" />
     <ClInclude Include="..\Library\tinygltf\stb_image_write.h" />
     <ClInclude Include="..\Library\tinygltf\tiny_gltf.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\CameraBase.h" />
+    <ClInclude Include="Src\Application\GameObject\Camera\CCTVCamera\CCTVCamera.h" />
+    <ClInclude Include="Src\Application\GameObject\Camera\FPSCamera\FPSCamera.h" />
+    <ClInclude Include="Src\Application\GameObject\Camera\TPSCamera\TPSCamera.h" />
+    <ClInclude Include="Src\Application\main.h" />
+    <ClInclude Include="Src\Application\Scene\BaseScene\BaseScene.h" />
+    <ClInclude Include="Src\Application\Scene\GameScene\GameScene.h" />
+    <ClInclude Include="Src\Application\Scene\ResultScene\ResultScene.h" />
+    <ClInclude Include="Src\Application\Scene\TitleScene\TitleScene.h" />
     <ClInclude Include="Src\Engine\Components\ColliderComponent.h" />
     <ClInclude Include="Src\Engine\Components\RenderComponent.h" />
     <ClInclude Include="Src\Engine\Components\TransformComponent.h" />
@@ -296,6 +308,7 @@
     <ClInclude Include="Src\Engine\ImGui\Editor\EditorUI\EditorUI.h" />
     <ClInclude Include="Src\Engine\ImGui\Editor\EditorUI\Panels\MainMenuBar.h" />
     <ClInclude Include="Src\Engine\ImGui\Editor\EditorUI\Panels\SceneViewPanel.h" />
+    <ClInclude Include="Src\Engine\ImGui\Editor\File\ImGuiFileBrowser.h" />
     <ClInclude Include="Src\Engine\ImGui\ImGuiManager.h" />
     <ClInclude Include="Src\Engine\ImGui\Log\Logger.h" />
     <ClInclude Include="Src\Engine\Scene\Scene.h" />
@@ -338,6 +351,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Library\imgui\imgui.cpp" />
+    <ClCompile Include="..\Library\imgui\ImGuiFileDialog.cpp" />
     <ClCompile Include="..\Library\imgui\ImGuizmo.cpp" />
     <ClCompile Include="..\Library\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\Library\imgui\imgui_draw.cpp" />
@@ -347,6 +361,14 @@
     <ClCompile Include="..\Library\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Library\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\CameraBase.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Camera\CCTVCamera\CCTVCamera.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Camera\FPSCamera\FPSCamera.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Camera\TPSCamera\TPSCamera.cpp" />
+    <ClCompile Include="Src\Application\main.cpp" />
+    <ClCompile Include="Src\Application\Scene\BaseScene\BaseScene.cpp" />
+    <ClCompile Include="Src\Application\Scene\GameScene\GameScene.cpp" />
+    <ClCompile Include="Src\Application\Scene\ResultScene\ResultScene.cpp" />
+    <ClCompile Include="Src\Application\Scene\TitleScene\TitleScene.cpp" />
     <ClCompile Include="Src\Engine\Components\ColliderComponent.cpp" />
     <ClCompile Include="Src\Engine\Components\RenderComponent.cpp" />
     <ClCompile Include="Src\Engine\Components\TransformComponent.cpp" />
@@ -362,6 +384,7 @@
     <ClCompile Include="Src\Engine\ImGui\Editor\EditorUI\EditorUI.cpp" />
     <ClCompile Include="Src\Engine\ImGui\Editor\EditorUI\Panels\MainMenuBar.cpp" />
     <ClCompile Include="Src\Engine\ImGui\Editor\EditorUI\Panels\SceneViewPanel.cpp" />
+    <ClCompile Include="Src\Engine\ImGui\Editor\File\ImGuiFileBrowser.cpp" />
     <ClCompile Include="Src\Engine\ImGui\ImGuiManager.cpp" />
     <ClCompile Include="Src\Engine\ImGui\Log\Logger.cpp" />
     <ClCompile Include="Src\Engine\Scene\Scene.cpp" />

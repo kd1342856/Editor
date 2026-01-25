@@ -4,6 +4,7 @@
 #include "Thread/ThreadManager.h"
 #include "Thread/Asset/AsyncAssetLoader.h"
 #include "Thread/Profiler/Profiler.h"
+#include "../../Application/main.h"
 
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_  HINSTANCE, _In_ LPSTR, _In_ int)
 {
@@ -113,9 +114,6 @@ void Engine::SetMouseGrabbed(bool enable)
 {
 	ShowCursor(!enable);
 	
-	// If grabbed, might want to confine cursor or reset pos, but for now just visibility
-	// In a real scenario, you'd clip cursor to window rect here.
-	// For simplicity in this framework context:
 	if (enable)
 	{
 		RECT rc;
@@ -142,6 +140,9 @@ void Engine::Execute()
 	{
 		return;
 	}
+
+	// アプリケーション初期化 (シーン登録など)
+	Application::Instance().Init();
 
 	KdFPSController fpsCtrl;
 	fpsCtrl.Init();

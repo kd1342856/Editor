@@ -1,4 +1,5 @@
 ﻿#include "CCTVCamera.h"
+#include "../../../../Engine/ECS/Entity.h"
 
 void CCTVCamera::Init()
 {
@@ -15,7 +16,7 @@ void CCTVCamera::PostUpdate()
 {
 	// ターゲットの行列(有効な場合利用する)
 	Math::Matrix targetMat = Math::Matrix::Identity;
-	std::shared_ptr<KdGameObject> spTarget = m_wpTarget.lock();
+	std::shared_ptr<Entity> spTarget = m_wpTarget.lock();
 	if (spTarget)
 	{
 		targetMat = spTarget->GetMatrix();
@@ -34,7 +35,7 @@ void CCTVCamera::UpdateLookAtRotate(const Math::Vector3& targetPos)
 	Math::Vector3 nowDir = m_mWorld.Backward();
 
 	// ターゲット(プレイヤー)への方向ベクトル
-	Math::Vector3 targetDir = targetPos - GetPos();
+	Math::Vector3 targetDir = targetPos - GetPosition();
 
 	// 正規化：方向ベクトルの長さを1にする
 	nowDir.Normalize();
@@ -72,7 +73,7 @@ void CCTVCamera::UpdateLookAtRotate(const Math::Vector3& targetPos)
 	m_DegAng.y += rotateAng;
 	tmpRotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_DegAng.y));
 
-	Math::Matrix tmpWorld = tmpRotation * Math::Matrix::CreateTranslation(GetPos());
+	Math::Matrix tmpWorld = tmpRotation * Math::Matrix::CreateTranslation(GetPosition());
 	tmpWorld = tmpWorld.Invert();
 
 	Math::Vector3 targetLocalPos;
@@ -87,7 +88,7 @@ void CCTVCamera::UpdateLookAtRotate(const Math::Vector3& targetPos)
 */
 	// ②
 	Math::Vector3 _targetVec = Math::Vector3::Zero;
-	_targetVec = targetPos - GetPos();
+	_targetVec = targetPos - GetPosition();
 
 	// YAW角
 	float _yaw = DirectX::XMConvertToDegrees(atan2(_targetVec.x, _targetVec.z));

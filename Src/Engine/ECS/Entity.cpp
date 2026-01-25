@@ -114,7 +114,7 @@ bool Entity::IsVisible(VisibilityFlags flag) const
 	return (m_visibilityFlags & static_cast<uint8_t>(flag)) != 0;
 }
 
-Math::Matrix Entity::GetMatrix()
+Math::Matrix Entity::GetMatrix() const
 {
 	auto tc = GetComponent<TransformComponent>();
 	if (tc)

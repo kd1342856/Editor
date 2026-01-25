@@ -1,6 +1,9 @@
 ﻿#include "EditorManager.h"
 #include "EditorUI/EditorUI.h" 
+#include "../../Components/ActionPlayerComponent.h"
+#include "../../Scene/SceneManager.h"
 #include "../../Core/Thread/Profiler/Profiler.h"
+#include "File/ImGuiFileBrowser.h"
 #include "../../Serializer/SceneSerializer.h"
 #include "EditorCamera/EditorCamera.h"
 #include "Command/CommandManager.h"
@@ -14,17 +17,8 @@ void EditorManager::Init()
 	m_gameRT.ClearTexture(Math::Color(0, 0, 0, 1)); // 黒でクリア
 
     // 最低限のテストシーン
-    auto e = std::make_shared<Entity>();    
-    auto tc = std::make_shared<TransformComponent>();
-    // 位置 0,0,0
-    e->AddComponent(tc);
-
-    auto rc = std::make_shared<RenderComponent>();
-    e->AddComponent(rc);
-
-    e->Init();
-    
-    m_entities.push_back(e);
+    // NOTE: SceneManager will handle scene initialization. EditorManager shouldn't force create entities unless it's in a blank state.
+    // For now, let SceneManager handle initial entities via Scene loading.
 
     // エディタカメラ
     m_editorCamera = std::make_shared<EditorCamera>();
@@ -36,10 +30,7 @@ void EditorManager::Init()
 
 void EditorManager::Update()
 {
-    for (auto& e : m_entities)
-    {
-        e->Update();
-    }
+    // NO-OP: SceneManager updates entities. EditorManager just observes or manipulates via UI.
 }
 
 void EditorManager::Draw()
@@ -53,25 +44,20 @@ void EditorManager::Draw()
 	// シェーダーへのカメラ情報更新
     if (m_editorCamera)
     {
-        // 描画前にスムーズな移動を保証するためにここで更新
-         // 本来はUpdateループで呼ぶべきだが、エディタ入力の同期のため、DrawUIでフォーカスチェックをするのが適切
-         // しかしシェーダーには今すぐ行列が必要
          m_editorCamera->WorkCamera()->SetToShader();
     }
     
 	// 重要: 描画前にライティング定数を更新！
 	KdShaderManager::Instance().WorkAmbientController().Draw();
 
-    // 全エンティティ描画
+    // 全エンティティ描画 (SceneManagerから取得)
+    const auto& entities = SceneManager::Instance().GetEntityList();
+
     KdShaderManager::Instance().m_StandardShader.BeginLit();
-    for (auto& e : m_entities)
+    for (auto& e : entities)
     {
-        // デバッグ: 描画動作確認のために単純なグリッドを描画
         e->DrawLit();
 
-        // コライダーのデバッグ描画 (暫定: ここで描画)
-        // 本来は e->DrawDebug() などを設けるべきだが、今回は Components を直接見るか、
-        // Entity にデバッグ描画用関数を追加する
         auto cc = e->GetComponent<ColliderComponent>();
         if (cc)
         {
@@ -89,10 +75,11 @@ std::string EditorManager::GetUniqueName(const std::string& baseName)
 {
     std::string name = baseName;
     int count = 0;
+    const auto& entities = SceneManager::Instance().GetEntityList();
 
     // 重複チェック
     auto checkDuplicate = [&](const std::string& n) {
-        for (const auto& e : m_entities) {
+        for (const auto& e : entities) {
             if (e->GetName() == n) return true;
         }
         return false;
@@ -105,6 +92,59 @@ std::string EditorManager::GetUniqueName(const std::string& baseName)
     }
     
     return name;
+}
+
+void EditorManager::DrawHierarchy()
+{
+    if (ImGui::Begin("Hierarchy"))
+    {
+        // 作成用の右クリックコンテキストメニュー
+        if (ImGui::BeginPopupContextWindow("HierarchyContextMenu"))
+        {
+            if (ImGui::MenuItem("Create Empty Object"))
+            {
+                auto e = std::make_shared<Entity>();
+                e->SetName(GetUniqueName("Empty Object"));
+                e->AddComponent(std::make_shared<TransformComponent>());
+                e->Init();
+                SceneManager::Instance().AddEntity(e);
+            }
+
+			ImGui::Separator();
+
+            ImGui::EndPopup();
+        }
+
+        const auto& entities = SceneManager::Instance().GetEntityList();
+
+        // 削除処理 (Deleteキー)
+        if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Delete))
+        {
+            if (auto selected = m_selectedEntity.lock())
+            {
+                // Remove from SceneManager
+                SceneManager::Instance().RemoveEntity(selected);
+                m_selectedEntity.reset(); // 選択解除
+            }
+        }
+
+        // エンティティ一覧
+        auto displayEntities = entities; 
+        
+        for (int i=0; i<displayEntities.size(); ++i)
+        {
+            auto& e = displayEntities[i];
+            
+            // ID重複回避のために ##Address を付与
+            std::string label = e->GetName() + "##" + std::to_string((uintptr_t)e.get());
+            
+            if(ImGui::Selectable(label.c_str(), m_selectedEntity.lock() == e))
+            {
+                m_selectedEntity = e;
+            }
+        }
+    }
+    ImGui::End();
 }
 
 void EditorManager::DrawUI()
@@ -124,23 +164,92 @@ void EditorManager::DrawUI()
                 std::shared_ptr<CameraBase> cam = m_camera.lock();
                 if (!cam) cam = m_editorCamera; // フォールバック
 
-                SceneSerializer::Save("Asset/Data/Scene/Scene.json", m_entities, cam);
+                std::string currentScene = SceneManager::Instance().GetCurrentSceneName();
+                if (!currentScene.empty())
+                {
+                    std::string path = "Asset/Data/Scene/" + currentScene + ".json";
+                    const auto& entities = SceneManager::Instance().GetEntityList();
+                    SceneSerializer::Save(path, entities, cam);
+                }
             }
             if (ImGui::MenuItem("Load Scene"))
             {
-                std::shared_ptr<CameraBase> cam = m_camera.lock();
-                if (!cam) cam = m_editorCamera;
+                // File Browserを開く
+                ImGuiFileBrowser::Instance().Open(
+                    "LoadScene", 
+                    "Load Scene JSON", 
+                    { ".json" }, 
+                    [this](const std::string& path) 
+                    {
+                        std::shared_ptr<CameraBase> cam = m_camera.lock();
+                        if (!cam) cam = m_editorCamera;
 
-                // ロード実行
-                bool res = SceneSerializer::Load("Asset/Data/Scene/Scene.json", m_entities, cam);
-                if (!res) 
-				{
-                     // 失敗時のログなどは内部で出ているはずだが、念のため
-                }
+                        std::vector<std::shared_ptr<Entity>> loadedEntities;
+                        bool res = SceneSerializer::Load(path, loadedEntities, cam);
+                        if (res) 
+                        {
+                            SceneManager::Instance().ClearEntities();
+                            for(auto& e : loadedEntities) SceneManager::Instance().AddEntity(e);
+                            
+                            // シーン名をファイル名から推測して更新してもいいかも？
+                            // SceneManager::Instance().ChangeScene(std::filesystem::path(path).stem().string());
+                        }
+                    });
             }
             ImGui::EndMenu();
         }
+
+        // Scene Menu
+        if (ImGui::BeginMenu("Scene"))
+        {
+            std::string currentScene = SceneManager::Instance().GetCurrentSceneName();
+
+            // List all scenes
+            std::vector<std::string> scenes = SceneManager::Instance().GetSceneNames();
+            for (const std::string& name : scenes)
+            {
+                bool isSelected = (name == currentScene);
+                if (ImGui::MenuItem(name.c_str(), NULL, isSelected))
+                {
+                    SceneManager::Instance().ChangeScene(name);
+                }
+            }
+
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Create New Scene"))
+            {
+                ImGui::OpenPopup("CreateNewScenePopup");
+            }
+
+            ImGui::EndMenu();
+        }
+
         ImGui::EndMainMenuBar();
+    }
+
+    // Modal for Creating New Scene
+    if (ImGui::BeginPopupModal("CreateNewScenePopup", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        static char buf[64] = "";
+        ImGui::InputText("Scene Name", buf, 64);
+
+        if (ImGui::Button("Create", ImVec2(120, 0)))
+        {
+            if (strlen(buf) > 0)
+            {
+                SceneManager::Instance().CreateScene(buf);
+                ImGui::CloseCurrentPopup();
+                memset(buf, 0, sizeof(buf)); // Reset buffer
+            }
+        }
+        ImGui::SetItemDefaultFocus();
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel", ImVec2(120, 0)))
+        {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
     }
 
     DrawGameView();
@@ -152,6 +261,9 @@ void EditorManager::DrawUI()
 
     // プロファイラ描画
     Profiler::Instance().DrawProfilerWindow();
+
+    // File Browser Draw
+    ImGuiFileBrowser::Instance().Draw();
 }
 
 void EditorManager::DrawGameView()
@@ -330,58 +442,6 @@ void EditorManager::DrawGameView()
 	ImGui::End();
 }
 
-void EditorManager::DrawHierarchy()
-{
-    if (ImGui::Begin("Hierarchy"))
-    {
-        // 作成用の右クリックコンテキストメニュー
-        if (ImGui::BeginPopupContextWindow("HierarchyContextMenu"))
-        {
-            if (ImGui::MenuItem("Create Empty Object"))
-            {
-                auto e = std::make_shared<Entity>();
-                e->SetName(GetUniqueName("Empty Object"));
-                e->AddComponent(std::make_shared<TransformComponent>());
-                e->Init();
-                m_entities.push_back(e);
-            }
-
-			ImGui::Separator();
-
-            ImGui::EndPopup();
-        }
-
-        // 削除処理 (Deleteキー)
-        if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Delete))
-        {
-            if (auto selected = m_selectedEntity.lock())
-            {
-                // vectorから削除
-                auto it = std::remove(m_entities.begin(), m_entities.end(), selected);
-                if (it != m_entities.end())
-                {
-                    m_entities.erase(it, m_entities.end());
-                    m_selectedEntity.reset(); // 選択解除
-                }
-            }
-        }
-
-        // エンティティ一覧
-        for (int i=0; i<m_entities.size(); ++i)
-        {
-            auto& e = m_entities[i];
-            
-            // ID重複回避のために ##Address を付与
-            std::string label = e->GetName() + "##" + std::to_string((uintptr_t)e.get());
-            
-            if(ImGui::Selectable(label.c_str(), m_selectedEntity.lock() == e))
-            {
-                m_selectedEntity = e;
-            }
-        }
-    }
-    ImGui::End();
-}
 
 void EditorManager::DrawInspector()
 {
@@ -406,6 +466,12 @@ void EditorManager::DrawInspector()
 		DrawComponentTransform(sel);
 		DrawComponentRender(sel);
 		DrawComponentCollider(sel);
+		
+		// Action
+		if (auto apc = sel->GetComponent<ActionPlayerComponent>())
+		{
+			apc->DrawInspector();
+		}
 
 		ImGui::Separator();
 
@@ -443,6 +509,15 @@ void EditorManager::DrawInspector()
 				if (ImGui::MenuItem("Collider"))
 				{
 					sel->AddComponent(std::make_shared<ColliderComponent>());
+				}
+			}
+
+			// Action Components
+			if (!sel->HasComponent<ActionPlayerComponent>())
+			{
+				if (ImGui::MenuItem("Action Player"))
+				{
+					sel->AddComponent(std::make_shared<ActionPlayerComponent>());
 				}
 			}
 
@@ -549,6 +624,34 @@ void EditorManager::DrawComponentRender(std::shared_ptr<Entity> sel)
                 if (rc->IsDynamic()) rc->SetModelWork(pathBuffer);
                 else rc->SetModelData(pathBuffer);
             }
+            ImGui::SameLine();
+            if (ImGui::Button("...##ModelSelect"))
+            {
+                ImGuiFileBrowser::Instance().Open(
+                    "SelectModel", 
+                    "Select Model File", 
+                    { ".gltf", ".glb", ".obj", ".fbx" }, // Common model formats
+                    [rc](const std::string& path) 
+                    {
+                        // Convert absolute path to relative if possible? 
+                        // For now, use full path or maybe just filename if in specific dir. 
+                        // Let's assume path is usable. 
+                        // Actually, Asset system usually expects relative path from Asset/
+                        // But FileBrowser returns full path. 
+                        // Let's try to make it relative to "Current Directory" if run from project root.
+                        // std::filesystem::relative(path, std::filesystem::current_path()).string();
+
+                        // Simple hack: if path contains "Asset", substring it.
+                        // Ideally we should use std::filesystem::relative.
+                        std::string setPath = path;
+                        try {
+                            setPath = std::filesystem::relative(path, std::filesystem::current_path()).string();
+                        } catch (...) {}
+
+                        if (rc->IsDynamic()) rc->SetModelWork(setPath);
+                        else rc->SetModelData(setPath);
+                    });
+            }
 
             // ドラッグ＆ドロップ (ターゲット)
             if (ImGui::BeginDragDropTarget())
@@ -585,14 +688,21 @@ void EditorManager::DrawComponentRender(std::shared_ptr<Entity> sel)
             
             if (ImGui::Button("..."))
             {
-                ImGui::OpenPopup("FileBrowserPopup");
-            }
-            
-            std::string selectedFile;
-            if (DrawFileBrowserPopup("FileBrowserPopup", selectedFile, {".gltf"}))
-            {
-                if (rc->IsDynamic()) rc->SetModelWork(selectedFile);
-                else rc->SetModelData(selectedFile);
+                ImGuiFileBrowser::Instance().Open(
+                    "ModelSelectPopup",
+                    "Select Model",
+                    { ".gltf", ".glb", ".obj", ".fbx" },
+                    [rc](const std::string& path)
+                    {
+                        // リソースパスの相対化などは適宜
+                        std::string setPath = path;
+                        try {
+                            setPath = std::filesystem::relative(path, std::filesystem::current_path()).string();
+                        } catch(...) {}
+
+                        if (rc->IsDynamic()) rc->SetModelWork(setPath);
+                        else rc->SetModelData(setPath);
+                    });
             }
         }
     }
@@ -748,111 +858,6 @@ void EditorManager::DrawComponentCollider(std::shared_ptr<Entity> sel)
     }
 }
 
-// ファイルブラウザポップアップ描画 
-bool EditorManager::DrawFileBrowserPopup(const std::string& popupName, std::string& outPath, const std::vector<std::string>& extensions)
-{
-    bool selected = false;
-    
-    if (ImGui::BeginPopup(popupName.c_str()))
-    {
-        static std::filesystem::path currentPath = "Asset";
-        
-        // ディレクトリ表示
-        ImGui::Text("Dir: %s", currentPath.string().c_str());
-        if (currentPath != "Asset")
-        {
-            if (ImGui::Button(".."))
-            {
-                currentPath = currentPath.parent_path();
-            }
-        }
-        ImGui::Separator();
-
-        // ファイルグリッド描画
-        float padding = 16.0f;
-        float thumbnailSize = 64.0f;
-        float cellSize = thumbnailSize + padding;
-
-        float panelWidth = ImGui::GetContentRegionAvail().x;
-        int columnCount = (int)(panelWidth / cellSize);
-        if (columnCount < 1) columnCount = 1;
-
-        if (ImGui::BeginTable("FileBrowserGrid", columnCount))
-        {
-            if (std::filesystem::exists(currentPath) && std::filesystem::is_directory(currentPath))
-            {
-                for (const auto& entry : std::filesystem::directory_iterator(currentPath))
-                {
-                    const auto& path = entry.path();
-                    std::string filename = path.filename().string();
-                    bool isDir = entry.is_directory();
-                    std::string ext = path.extension().string();
-
-                    // フィルタリング (ディレクトリは常に表示、ファイルは拡張子一致のみ)
-                    if (!isDir && !extensions.empty())
-                    {
-                        bool match = false;
-                        for (const auto& targetExt : extensions) 
-						{
-                            if (ext == targetExt) 
-							{
-                                match = true;
-                                break;
-                            }
-                        }
-                        if (!match) continue; // 対象外のファイルはスキップ
-                    }
-
-                    ImGui::TableNextColumn();
-                    ImGui::PushID(path.string().c_str());
-                    
-                    // アイコン描画
-                    ImVec4 color = isDir ? ImVec4(0.8f, 0.7f, 0.2f, 1.0f) : ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
-                    ImGui::PushStyleColor(ImGuiCol_Button, color);
-
-                    if (ImGui::Button("##Icon", ImVec2(thumbnailSize, thumbnailSize)))
-                    {
-                    }
-
-                    // ドラッグ＆ドロップソース
-                    if (!isDir && ImGui::BeginDragDropSource())
-                    {
-                        std::string pathStr = path.string();
-                        std::replace(pathStr.begin(), pathStr.end(), '\\', '/');
-                        ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", pathStr.c_str(), pathStr.length() + 1);
-                        ImGui::Text("%s", filename.c_str());
-                        ImGui::EndDragDropSource();
-                    }
-
-                    // ダブルクリック判定
-                    if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-                    {
-                        if (isDir) 
-						{
-                            currentPath = path;
-                        } 
-						else 
-						{
-                            std::string selectedPath = path.string();
-                            std::replace(selectedPath.begin(), selectedPath.end(), '\\', '/');
-                            outPath = selectedPath;
-                            selected = true;
-                            ImGui::CloseCurrentPopup();
-                        }
-                    }
-
-                    ImGui::PopStyleColor();
-                    ImGui::TextWrapped("%s", filename.c_str());
-                    ImGui::PopID();
-                }
-            }
-            ImGui::EndTable();
-        }
-        ImGui::EndPopup();
-    }
-    
-    return selected;
-}
 
 void EditorManager::SetCameras(const std::shared_ptr<CameraBase>& tps, const std::shared_ptr<CameraBase>& build, const std::shared_ptr<CameraBase>& editor)
 {

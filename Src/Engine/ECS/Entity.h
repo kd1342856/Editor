@@ -49,7 +49,7 @@ public:
 	template <typename T>
 	bool HasComponent() const;
 
-	Math::Matrix GetMatrix();
+	Math::Matrix GetMatrix() const;
 
 private:
 	std::string m_name = "Entity";

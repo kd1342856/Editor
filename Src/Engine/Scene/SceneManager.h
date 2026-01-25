@@ -24,6 +24,7 @@ public:
 
 	// ECS Management
 	void AddEntity(const std::shared_ptr<Entity>& entity);
+	void RemoveEntity(const std::shared_ptr<Entity>& entity);
 	const std::vector<std::shared_ptr<Entity>>& GetEntityList() const { return m_entityList; }
 	void ClearEntities();
 
@@ -31,6 +32,11 @@ public:
 	using SceneFactory = std::function<std::shared_ptr<Scene>()>;
 	void RegisterScene(const std::string& name, SceneFactory factory);
 	void ChangeScene(const std::string& name);
+
+	// Dynamic Scene Support
+	std::vector<std::string> GetSceneNames();
+    const std::string& GetCurrentSceneName() const { return m_currentSceneName; }
+	void CreateScene(const std::string& name);
 
 private:
 	SceneManager() {}
@@ -40,5 +46,6 @@ private:
 
 	std::unordered_map<std::string, SceneFactory> m_sceneRegistry;
 	std::shared_ptr<Scene> m_currentScene = nullptr;
+    std::string m_currentSceneName = "";
 	std::string m_nextSceneName = "";
 };

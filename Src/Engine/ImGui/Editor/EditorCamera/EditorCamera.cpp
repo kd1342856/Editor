@@ -166,11 +166,11 @@ void EditorCamera::Update()
         }
 
         // ズーム (ホイール)
-        if (io.MouseWheel != 0.0f)
-        {
-            m_distance -= io.MouseWheel * m_zoomSpeed; 
-            if (m_distance < 0.1f) m_distance = 0.1f;
-        }
+        // if (io.MouseWheel != 0.0f)
+        // {
+        //     m_distance -= io.MouseWheel * m_zoomSpeed; 
+        //     // if (m_distance < 0.1f) m_distance = 0.1f;
+        // }
         
         // パン (中ドラッグ)
         if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))

@@ -1,7 +1,5 @@
 ﻿#include "main.h"
-#include "../Engine/Core/Engine.h"
-
-// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
-// エントリーポイント
-// アプリケーションはこの関数から進行する
-// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+#include "../Engine/Scene/SceneManager.h"
+#include "Scene/TitleScene/TitleScene.h"
+#include "Scene/GameScene/GameScene.h"
+#include "Scene/ResultScene/ResultScene.h"

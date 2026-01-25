@@ -29,7 +29,7 @@ void SceneSerializer::Save(const std::string& filepath,
 	const std::shared_ptr<CameraBase>& editorCamera)
 {
 	json sceneJson;
-	sceneJson["Scene"] = "Untitled"; // TODO: シーン名を入れる
+	sceneJson["Scene"] = "Untitled";
 	
 	// 1. エディタカメラの保存 (オプション)
 	if (editorCamera)
@@ -65,7 +65,8 @@ void SceneSerializer::Save(const std::string& filepath,
 		if (entity->HasComponent<RenderComponent>())
 		{
 			auto rc = entity->GetComponent<RenderComponent>();
-			eJson["Render"] = {
+			eJson["Render"] = 
+			{
 				{ "ModelPath", rc->GetModelPath() },
 				{ "IsDynamic", rc->IsDynamic() }
 			};
@@ -75,7 +76,8 @@ void SceneSerializer::Save(const std::string& filepath,
 		if (entity->HasComponent<ColliderComponent>())
 		{
 			auto cc = entity->GetComponent<ColliderComponent>();
-			eJson["Collider"] = {
+			eJson["Collider"] = 
+			{
 				{ "Enable",         cc->IsEnable() },
 				{ "DebugDraw",      cc->IsDebugDrawEnabled() },
 				{ "CollisionType",  cc->GetCollisionType() },

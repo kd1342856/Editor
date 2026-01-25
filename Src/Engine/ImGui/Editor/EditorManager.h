@@ -21,8 +21,6 @@ public:
     std::string GetUniqueName(const std::string& baseName);
 
     // アクセサ
-	std::vector<std::shared_ptr<Entity>>& GetEntities() { return m_entities; }
-    void AddEntity(const std::shared_ptr<Entity>& e) { m_entities.push_back(e); }
 
     // カメラへのアクセス
     void SetCameras(const std::shared_ptr<CameraBase>& tps, const std::shared_ptr<CameraBase>& build, const std::shared_ptr<CameraBase>& editor);
@@ -38,12 +36,10 @@ private:
     void DrawComponentRender(std::shared_ptr<Entity> sel);
     void DrawComponentCollider(std::shared_ptr<Entity> sel);
     
-    // File Browser
-    bool DrawFileBrowserPopup(const std::string& popupName, std::string& outPath, const std::vector<std::string>& extensions = {});
+    // DrawFileBrowserPopup Removed
 
-	std::vector<std::shared_ptr<Entity>> m_entities;
     std::weak_ptr<Entity> m_selectedEntity;
-    
+
     // エディタカメラ (参照)
     std::weak_ptr<CameraBase> m_camera;
     // 実体を持つエディタカメラ

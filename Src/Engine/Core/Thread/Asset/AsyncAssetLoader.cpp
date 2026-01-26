@@ -116,7 +116,7 @@ std::shared_ptr<KdTexture> AsyncAssetLoader::LoadTextureAsync(const std::string&
 			// 開発用ログ
 			Logger::Log("AsyncLoader", "Loading Texture: " + pathStr);
 
-			// A. ファイル読み込み (DirectXTex)
+			// A. ファイル読み込み
 			std::wstring wFilename = sjis_to_wide(pathStr);
 			DirectX::TexMetadata meta;
 			DirectX::ScratchImage image;

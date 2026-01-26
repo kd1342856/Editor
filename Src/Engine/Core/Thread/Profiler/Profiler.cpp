@@ -3,7 +3,6 @@
 void Profiler::ResetFrame()
 {
 	// ポーズ中は履歴を更新しない（表示を固定）
-	// ただし m_results はクリアしておかないとメモリが増え続けるのでクリアする
 	if (!m_isPaused)
 	{
 		m_historyResults = std::move(m_results);
@@ -54,9 +53,6 @@ void Profiler::DrawProfilerWindow()
         ImGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x + width, p.y + height), IM_COL32(50, 50, 50, 255));
 
         // スケール計算
-        // 16.6ms (60FPS) を基準に、Scale倍する
-        // width = 33ms * scale くらいにする？
-        // Scale 1.0 = 1画面 33ms (2フレーム分)
         float maxTime = 33.0f / m_timeScale; 
         float pxPerMs = width / maxTime;
 
@@ -109,7 +105,7 @@ void Profiler::DrawProfilerWindow()
             }
         }
 
-        // 時間軸ガイド (16.6ms, 33.3ms)
+        // 時間軸ガイド
         float guide16 = 16.66f * pxPerMs;
         if (guide16 < width) {
             ImGui::GetWindowDrawList()->AddLine(ImVec2(p.x + guide16, p.y), ImVec2(p.x + guide16, p.y + height), IM_COL32(100, 255, 100, 100));

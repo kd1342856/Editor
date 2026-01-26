@@ -2,13 +2,11 @@
 
 class Entity;
 
-// Base class for all components
 class Component
 {
 public:
 	virtual ~Component() {}
 
-	// Lifecycle methods
 	virtual void Init() {}
 	virtual void Update() {}
 	virtual void PostUpdate() {}
@@ -20,13 +18,11 @@ public:
 	virtual void GenerateDepthMapFromLight() {}
 	virtual void DrawSprite() {}
 	virtual void DrawInspector() {} 
-	virtual void DrawDebug() {} // Debug drawing
+	virtual void DrawDebug() {}
 
-	// Owner management
 	void SetOwner(const std::shared_ptr<Entity>& owner) { m_owner = owner; }
 	std::shared_ptr<Entity> GetOwner() const { return m_owner.lock(); }
 
-	// Enable/Disable
 	void SetEnable(bool enable) { m_enable = enable; }
 	bool IsEnable() const { return m_enable; }
 

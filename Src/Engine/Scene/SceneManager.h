@@ -8,8 +8,8 @@ class SceneManager
 public:
 
 
-	void Init();
-	void PreUpdate();
+	void Init(){}
+	void PreUpdate(){}
 	void Update();
 	void PostUpdate();
 	void PreDraw();

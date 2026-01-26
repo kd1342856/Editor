@@ -1,5 +1,5 @@
 ﻿#pragma once
-// ジョブの定義
+// ジョブ
 struct Job
 {
 	enum class Priority
@@ -24,20 +24,19 @@ struct Job
 class ThreadManager
 {
 public:
-	// 初期化 (物理コア数に応じてスレッド生成)
+	// 初期化 
 	void Init();
 
 	// 終了処理
 	void Release();
 
-	// ジョブ投入 (任意の関数を投げられる)
-	// 戻り値: std::future<RetType> で結果を待機可能
+	// ジョブ投入 
 	template<typename Func, typename... Args>
 	auto AddJob(Func&& func, Args&&... args) -> std::future<typename std::invoke_result<Func, Args...>::type>
 	{
 		using ReturnType = typename std::invoke_result<Func, Args...>::type;
 
-		// タスクをパッケージ化 (shared_ptrで管理してコピー可能にする)
+		// タスクをパッケージ化
 		auto task = std::make_shared<std::packaged_task<ReturnType()>>(
 			std::bind(std::forward<Func>(func), std::forward<Args>(args)...)
 		);

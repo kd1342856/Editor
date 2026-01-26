@@ -16,7 +16,6 @@ public:
 	Entity() {}
 	virtual ~Entity() {}
 
-	// Lifecycle methods (delegated to components)
 	virtual void Init();
 	virtual void Update();
 	virtual void PostUpdate();
@@ -29,7 +28,6 @@ public:
 	virtual void DrawInspector();
 	virtual void DrawDebug();
 
-	// Property Accessors
 	void SetName(const std::string& name) { m_name = name; }
 	const std::string& GetName() const { return m_name; }
 
@@ -39,7 +37,6 @@ public:
 	void SetVisibility(VisibilityFlags flag, bool enabled);
 	bool IsVisible(VisibilityFlags flag) const;
 
-	// Component Management
 	template <typename T>
 	void AddComponent(const std::shared_ptr<T>& component);
 
@@ -59,7 +56,6 @@ private:
 	std::unordered_map<std::type_index, std::shared_ptr<Component>> m_components;
 };
 
-// Template Implementation
 template <typename T>
 void Entity::AddComponent(const std::shared_ptr<T>& component)
 {

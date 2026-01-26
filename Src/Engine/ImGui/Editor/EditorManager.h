@@ -26,17 +26,14 @@ public:
     void SetCameras(const std::shared_ptr<CameraBase>& tps, const std::shared_ptr<CameraBase>& build, const std::shared_ptr<CameraBase>& editor);
 
 private:
-    // UI Helper Methods
     void DrawGameView();
     void DrawHierarchy();
     void DrawInspector();
 
-    // Component UI Helpers
     void DrawComponentTransform(std::shared_ptr<Entity> sel);
     void DrawComponentRender(std::shared_ptr<Entity> sel);
     void DrawComponentCollider(std::shared_ptr<Entity> sel);
     
-    // DrawFileBrowserPopup Removed
 
     std::weak_ptr<Entity> m_selectedEntity;
 
@@ -53,7 +50,7 @@ private:
     KdRenderTargetChanger m_rtChanger;
 
     // ImGuizmo
-    int m_gizmoType = -1; // -1: None, or ImGuizmo::TRANSLATE etc.
+    int m_gizmoType = -1;
     bool m_isGizmoUsing = false;
-    Math::Matrix m_gizmoStartMatrix; // ドラッグ開始時の行列
+    Math::Matrix m_gizmoStartMatrix;
 };

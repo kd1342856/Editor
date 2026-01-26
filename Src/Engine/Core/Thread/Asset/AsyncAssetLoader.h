@@ -7,12 +7,10 @@ class AsyncAssetLoader
 {
 public:
 
-
-
 	// 初期化
 	void Init();
 	
-	// 更新 (非同期ロード完了時の同期処理など)
+	// 更新
 	void Update();
 
 	// 解放

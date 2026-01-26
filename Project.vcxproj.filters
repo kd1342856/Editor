@@ -151,6 +151,21 @@
     <Filter Include="Library\imgui\dirent">
       <UniqueIdentifier>{85ed77f6-f00c-455e-b61e-fc35fe2f671f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Engine\Components\Action">
+      <UniqueIdentifier>{0850b480-7820-4ba8-9c58-771beb969ec5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Engine\Components\Action\Player">
+      <UniqueIdentifier>{c8ee7d30-8af0-4d21-af65-55753c75fb0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Engine\Components\Transform">
+      <UniqueIdentifier>{9c76ea4d-b6ac-478e-9808-48cc1b355466}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Engine\Components\Collider">
+      <UniqueIdentifier>{dbf49feb-99eb-4c6a-8556-021c62514916}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Engine\Components\Render">
+      <UniqueIdentifier>{796ae7d4-cbe6-4442-85b9-2c7571460743}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -318,12 +333,6 @@
     <ClInclude Include="Src\Engine\Core\Engine.h">
       <Filter>Src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Engine\Components\RenderComponent.h">
-      <Filter>Src\Engine\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Engine\Components\TransformComponent.h">
-      <Filter>Src\Engine\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Engine\ImGui\ImGuiManager.h">
       <Filter>Src\Engine\ImGui</Filter>
     </ClInclude>
@@ -359,9 +368,6 @@
     </ClInclude>
     <ClInclude Include="Src\Framework\Utility\KdDebug\KdDebugWireFrame.h">
       <Filter>Src\Framework\Utility\KdDebug</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Engine\Components\ColliderComponent.h">
-      <Filter>Src\Engine\Components</Filter>
     </ClInclude>
     <ClInclude Include="..\Library\imgui\ImGuizmo.h">
       <Filter>Library\imgui</Filter>
@@ -422,6 +428,18 @@
     </ClInclude>
     <ClInclude Include="..\Library\imgui\dirent\dirent.h">
       <Filter>Library\imgui\dirent</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\Components\Transform\TransformComponent.h">
+      <Filter>Src\Engine\Components\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\Components\Render\RenderComponent.h">
+      <Filter>Src\Engine\Components\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\Components\Collider\ColliderComponent.h">
+      <Filter>Src\Engine\Components\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\Components\Action\Player\ActionPlayerComponent.h">
+      <Filter>Src\Engine\Components\Action\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -584,17 +602,8 @@
     <ClCompile Include="Src\Engine\Serializer\SceneSerializer.cpp">
       <Filter>Src\Engine\Serializer</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Engine\Components\TransformComponent.cpp">
-      <Filter>Src\Engine\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Engine\Components\RenderComponent.cpp">
-      <Filter>Src\Engine\Components</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Framework\Utility\KdDebug\KdDebugWireFrame.cpp">
       <Filter>Src\Framework\Utility\KdDebug</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Engine\Components\ColliderComponent.cpp">
-      <Filter>Src\Engine\Components</Filter>
     </ClCompile>
     <ClCompile Include="..\Library\imgui\ImGuizmo.cpp">
       <Filter>Library\imgui</Filter>
@@ -637,6 +646,18 @@
     </ClCompile>
     <ClCompile Include="Src\Engine\ImGui\Editor\File\ImGuiFileBrowser.cpp">
       <Filter>Src\Engine\ImGui\Editor\File</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Engine\Components\Transform\TransformComponent.cpp">
+      <Filter>Src\Engine\Components\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Engine\Components\Render\RenderComponent.cpp">
+      <Filter>Src\Engine\Components\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Engine\Components\Collider\ColliderComponent.cpp">
+      <Filter>Src\Engine\Components\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Engine\Components\Action\Player\ActionPlayerComponent.cpp">
+      <Filter>Src\Engine\Components\Action\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -10,10 +10,6 @@ void ThreadManager::Init()
 	// (取得できない場合はとりあえず4スレッド)
 	unsigned int numThreads = std::thread::hardware_concurrency();
 	if (numThreads == 0) numThreads = 4;
-
-	// メインスレッド分を引くかはお好みだが、
-	// ここではフルパワーを使うためにそのまま作成する
-    // (重い処理を投げる前提なので)
     
 	m_stop = false;
 
@@ -22,13 +18,11 @@ void ThreadManager::Init()
 	{
 		m_workers.emplace_back(std::bind(&ThreadManager::WorkerThreadLoop, this));
 	}
-
-	// Logger::Log("ThreadManager", KdFormat("Worker Threads Created: %d", numThreads));
 }
 
 void ThreadManager::Release()
 {
-	// 停止フラグを立てる
+	// 停止フラグ
 	{
 		std::unique_lock<std::mutex> lock(m_queueMutex);
 		m_stop = true;
@@ -77,7 +71,7 @@ void ThreadManager::WorkerThreadLoop()
 			}
 		}
 
-		// ジョブ実行 (ロックの外で行う)
+		// ジョブ実行
 		if (job.m_func)
 		{
 			try
@@ -87,8 +81,6 @@ void ThreadManager::WorkerThreadLoop()
 			}
 			catch (...)
 			{
-				// 例外が発生してもスレッドを止めない
-				// Logger::Error("Exception in Worker Thread");
 			}
 		}
 	}

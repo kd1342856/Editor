@@ -1,9 +1,5 @@
 ﻿#include "ImGuiFileBrowser.h"
 
-// Pch.h で ImGuiFileDialog.h がインクルードされている前提
-// まだインクルードされていない場合は Pch.h に追加するか、ここでインクルードする
-// #include "imgui/ImGuiFileDialog.h" 
-
 void ImGuiFileBrowser::Open(const std::string& key, const std::string& title, const std::vector<std::string>& filters, std::function<void(const std::string&)> callback)
 {
 	m_dialogKey = key;
@@ -20,9 +16,6 @@ void ImGuiFileBrowser::Open(const std::string& key, const std::string& title, co
 	// 空の場合はすべて
 	if (filterStr.empty()) filterStr = ".*";
 
-	// ImGuiFileDialogを開く
-	// インスタンス取得 -> OpenDialog
-	// 引数: キー, タイトル, フィルタ, Config
 	IGFD::FileDialogConfig config;
 	config.path = ".";
 	ImGuiFileDialog::Instance()->OpenDialog(key, title.c_str(), filterStr.c_str(), config);

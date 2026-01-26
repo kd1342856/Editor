@@ -23,13 +23,13 @@ public:
 	
 	std::shared_ptr<EditorManager> m_editor;
 
-	// Accessor Helpers (Legacy support)
+	// アクセサ
 	float GetWheelDelta() const { return ImGui::GetIO().MouseWheel; }
 	bool GetGameViewUVFromMouse(float& u, float& v) const;
 	bool IsMouseOverGameView() const;
 	bool IsUIMouseCaptured()const { return ImGui::GetIO().WantCaptureMouse; }
 
-	// Debug Callbacks
+	// デバッグ
 	void RegisterDebugWindow(void* id, std::function<void()> cb);
 	void UnregisterDebugWindow(void* id);
 
@@ -37,7 +37,7 @@ private:
 	ImGuiManager() {}
 	~ImGuiManager() { GuiRelease(); }
 
-	// Callbacks
+	// コールバック
 	std::unordered_map<void*, std::function<void()>> m_debugCallbacks;
 	
 	bool m_isReleased = false;

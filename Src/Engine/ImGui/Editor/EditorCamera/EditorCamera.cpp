@@ -10,8 +10,8 @@ EditorCamera::EditorCamera()
 void EditorCamera::Init()
 {
 	CameraBase::Init();
-
-	// Proj
+	
+	//　視野
 	m_spCamera->SetProjectionMatrix(60.0f);
 }
 
@@ -62,17 +62,13 @@ void EditorCamera::Update()
             0.0f);
         Math::Vector3 forward = rotMat.Backward();
 
-        if (!m_isFlyMode) // これからFlyModeに入る場合 (Orbit -> Fly)
+        if (!m_isFlyMode) 
         {
-            // Orbitモードの注視点から、カメラ位置(Flyモードの視点)へ移動
-            // CameraPos = Target + Backward * Distance
             m_focusPoint += forward * m_distance;
             m_justEnteredFlyMode = true; // フラグを立てる
         }
-        else // これからOrbitModeに入る場合 (Fly -> Orbit)
+        else 
         {
-            // Flyモードの視点(カメラ位置)から、注視点へ移動
-            // Target = CameraPos - Backward * Distance
             m_focusPoint -= forward * m_distance;
         }
 
@@ -119,12 +115,8 @@ void EditorCamera::Update()
             // マウス位置を中心に戻す
             SetCursorPos(centerX, centerY);
         }
-        
-        // ImGui側にも伝える (念のため)
-        // io.MousePos = ImVec2((float)centerX, (float)centerY);
-        // io.WantSetMousePos = true;
 
-        // --- 移動 (WinAPI GetAsyncKeyState) ---
+        // --- 移動 ---
         Math::Vector3 moveDir = Math::Vector3::Zero;
 
         Math::Matrix rotation = Math::Matrix::CreateFromYawPitchRoll(
@@ -136,7 +128,6 @@ void EditorCamera::Update()
         Math::Vector3 right   = rotation.Right();
         Math::Vector3 up      = Math::Vector3::Up;
 
-        // WinAPI で直接キー入力判定
         if (GetAsyncKeyState('W') & 0x8000) moveDir += forward;
         if (GetAsyncKeyState('S') & 0x8000) moveDir -= forward;
         if (GetAsyncKeyState('D') & 0x8000) moveDir += right;
@@ -152,7 +143,7 @@ void EditorCamera::Update()
 	}
 	else
 	{
-        // ==== 通常 (オービット) モード ====
+        // ==== 通常 ====
         
         // 回転 (右ドラッグ)
         if (ImGui::IsMouseDown(ImGuiMouseButton_Right))
@@ -164,13 +155,6 @@ void EditorCamera::Update()
             m_DegAng.x += dy * m_rotateSpeed;
             m_DegAng.x = std::clamp(m_DegAng.x, -89.0f, 89.0f);
         }
-
-        // ズーム (ホイール)
-        // if (io.MouseWheel != 0.0f)
-        // {
-        //     m_distance -= io.MouseWheel * m_zoomSpeed; 
-        //     // if (m_distance < 0.1f) m_distance = 0.1f;
-        // }
         
         // パン (中ドラッグ)
         if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))

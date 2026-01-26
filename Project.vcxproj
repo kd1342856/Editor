@@ -287,9 +287,10 @@
     <ClInclude Include="Src\Application\Scene\GameScene\GameScene.h" />
     <ClInclude Include="Src\Application\Scene\ResultScene\ResultScene.h" />
     <ClInclude Include="Src\Application\Scene\TitleScene\TitleScene.h" />
-    <ClInclude Include="Src\Engine\Components\ColliderComponent.h" />
-    <ClInclude Include="Src\Engine\Components\RenderComponent.h" />
-    <ClInclude Include="Src\Engine\Components\TransformComponent.h" />
+    <ClInclude Include="Src\Engine\Components\Action\Player\ActionPlayerComponent.h" />
+    <ClInclude Include="Src\Engine\Components\Collider\ColliderComponent.h" />
+    <ClInclude Include="Src\Engine\Components\Render\RenderComponent.h" />
+    <ClInclude Include="Src\Engine\Components\Transform\TransformComponent.h" />
     <ClInclude Include="Src\Engine\Core\Engine.h" />
     <ClInclude Include="Src\Engine\Core\Thread\Asset\AsyncAssetLoader.h" />
     <ClInclude Include="Src\Engine\Core\Thread\Profiler\Profiler.h" />
@@ -369,9 +370,10 @@
     <ClCompile Include="Src\Application\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="Src\Application\Scene\ResultScene\ResultScene.cpp" />
     <ClCompile Include="Src\Application\Scene\TitleScene\TitleScene.cpp" />
-    <ClCompile Include="Src\Engine\Components\ColliderComponent.cpp" />
-    <ClCompile Include="Src\Engine\Components\RenderComponent.cpp" />
-    <ClCompile Include="Src\Engine\Components\TransformComponent.cpp" />
+    <ClCompile Include="Src\Engine\Components\Action\Player\ActionPlayerComponent.cpp" />
+    <ClCompile Include="Src\Engine\Components\Collider\ColliderComponent.cpp" />
+    <ClCompile Include="Src\Engine\Components\Render\RenderComponent.cpp" />
+    <ClCompile Include="Src\Engine\Components\Transform\TransformComponent.cpp" />
     <ClCompile Include="Src\Engine\Core\Engine.cpp" />
     <ClCompile Include="Src\Engine\Core\Thread\Asset\AsyncAssetLoader.cpp" />
     <ClCompile Include="Src\Engine\Core\Thread\Profiler\Profiler.cpp" />

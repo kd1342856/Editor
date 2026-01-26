@@ -2,9 +2,9 @@
 
 EditorCamera::EditorCamera()
 {
-	m_focusPoint = { 5.0f, 7.0f, 0.0f }; // 高さを上げる
-    m_distance = 0.0f;                  // 距離も少し離す
-    m_DegAng = { 20.0f, -45.0f, 0.0f };  // 角度も見下ろし気味に
+	m_focusPoint = { 5.0f, 7.0f, 0.0f };	// 高さを上げる
+    m_distance = 0.0f;						// 距離も少し離す
+    m_DegAng = { 20.0f, -45.0f, 0.0f };		// 角度も見下ろし気味に
 }
 
 void EditorCamera::Init()

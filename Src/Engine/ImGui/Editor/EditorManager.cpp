@@ -1,6 +1,5 @@
 ﻿#include "EditorManager.h"
 #include "EditorUI/EditorUI.h" 
-#include "../../Components/ActionPlayerComponent.h"
 #include "../../Scene/SceneManager.h"
 #include "../../Core/Thread/Profiler/Profiler.h"
 #include "File/ImGuiFileBrowser.h"
@@ -12,30 +11,25 @@
 
 void EditorManager::Init()
 {
-	// ゲームビュー用レンダーターゲット作成 (デフォルト 720p)
+	// ゲームビュー用レンダーターゲット作成 
 	m_gameRT.CreateRenderTarget(1280, 720, true, DXGI_FORMAT_R8G8B8A8_UNORM);
 	m_gameRT.ClearTexture(Math::Color(0, 0, 0, 1)); // 黒でクリア
-
-    // 最低限のテストシーン
-    // NOTE: SceneManager will handle scene initialization. EditorManager shouldn't force create entities unless it's in a blank state.
-    // For now, let SceneManager handle initial entities via Scene loading.
 
     // エディタカメラ
     m_editorCamera = std::make_shared<EditorCamera>();
     m_editorCamera->Init();
 
-    // ログ初期化 (特になくても動くが、起動ログ出す)
+    // ログ初期化
     Logger::Log("System", "Editor Initialized");
 }
 
 void EditorManager::Update()
 {
-    // NO-OP: SceneManager updates entities. EditorManager just observes or manipulates via UI.
 }
 
 void EditorManager::Draw()
 {
-	// ゲームビューのクリア (バックバッファの期待に合わせて標準的な青を使用)
+	// ゲームビューのクリア
 	m_gameRT.ClearTexture(Math::Color(0.0f, 0.0f, 1.0f, 1.0f)); 
 
 	// ゲームビュー用レンダーターゲットに切り替え
@@ -54,14 +48,14 @@ void EditorManager::Draw()
     const auto& entities = SceneManager::Instance().GetEntityList();
 
     KdShaderManager::Instance().m_StandardShader.BeginLit();
-    for (auto& e : entities)
+    for (auto& entity : entities)
     {
-        e->DrawLit();
+        entity->DrawLit();
 
-        auto cc = e->GetComponent<ColliderComponent>();
-        if (cc)
+        auto collider = entity->GetComponent<ColliderComponent>();
+        if (collider)
         {
-            cc->DrawDebug();
+            collider->DrawDebug();
         }
     }
     KdShaderManager::Instance().m_StandardShader.EndLit();
@@ -79,8 +73,8 @@ std::string EditorManager::GetUniqueName(const std::string& baseName)
 
     // 重複チェック
     auto checkDuplicate = [&](const std::string& n) {
-        for (const auto& e : entities) {
-            if (e->GetName() == n) return true;
+        for (const auto& entity : entities) {
+            if (entity->GetName() == n) return true;
         }
         return false;
     };
@@ -103,11 +97,11 @@ void EditorManager::DrawHierarchy()
         {
             if (ImGui::MenuItem("Create Empty Object"))
             {
-                auto e = std::make_shared<Entity>();
-                e->SetName(GetUniqueName("Empty Object"));
-                e->AddComponent(std::make_shared<TransformComponent>());
-                e->Init();
-                SceneManager::Instance().AddEntity(e);
+                auto entity = std::make_shared<Entity>();
+                entity->SetName(GetUniqueName("Empty Object"));
+                entity->AddComponent(std::make_shared<TransformComponent>());
+                entity->Init();
+                SceneManager::Instance().AddEntity(entity);
             }
 
 			ImGui::Separator();
@@ -122,7 +116,6 @@ void EditorManager::DrawHierarchy()
         {
             if (auto selected = m_selectedEntity.lock())
             {
-                // Remove from SceneManager
                 SceneManager::Instance().RemoveEntity(selected);
                 m_selectedEntity.reset(); // 選択解除
             }
@@ -133,14 +126,14 @@ void EditorManager::DrawHierarchy()
         
         for (int i=0; i<displayEntities.size(); ++i)
         {
-            auto& e = displayEntities[i];
+            auto& entity = displayEntities[i];
             
             // ID重複回避のために ##Address を付与
-            std::string label = e->GetName() + "##" + std::to_string((uintptr_t)e.get());
+            std::string label = entity->GetName() + "##" + std::to_string((uintptr_t)entity.get());
             
-            if(ImGui::Selectable(label.c_str(), m_selectedEntity.lock() == e))
+            if(ImGui::Selectable(label.c_str(), m_selectedEntity.lock() == entity))
             {
-                m_selectedEntity = e;
+                m_selectedEntity = entity;
             }
         }
     }
@@ -157,10 +150,9 @@ void EditorManager::DrawUI()
     {
         if (ImGui::BeginMenu("File"))
         {
-            // 名前付きで保存とかは後で。とりあえず固定パス
             if (ImGui::MenuItem("Save Scene"))
             {
-                // カメラ情報の保存を試みる（なくても保存はする）
+                // カメラ情報の保存を試みる
                 std::shared_ptr<CameraBase> cam = m_camera.lock();
                 if (!cam) cam = m_editorCamera; // フォールバック
 
@@ -189,22 +181,18 @@ void EditorManager::DrawUI()
                         if (res) 
                         {
                             SceneManager::Instance().ClearEntities();
-                            for(auto& e : loadedEntities) SceneManager::Instance().AddEntity(e);
-                            
-                            // シーン名をファイル名から推測して更新してもいいかも？
-                            // SceneManager::Instance().ChangeScene(std::filesystem::path(path).stem().string());
+                            for(auto& entity : loadedEntities) SceneManager::Instance().AddEntity(entity);
                         }
                     });
             }
             ImGui::EndMenu();
         }
 
-        // Scene Menu
+        // Sceneメニュー
         if (ImGui::BeginMenu("Scene"))
         {
             std::string currentScene = SceneManager::Instance().GetCurrentSceneName();
 
-            // List all scenes
             std::vector<std::string> scenes = SceneManager::Instance().GetSceneNames();
             for (const std::string& name : scenes)
             {
@@ -228,7 +216,6 @@ void EditorManager::DrawUI()
         ImGui::EndMainMenuBar();
     }
 
-    // Modal for Creating New Scene
     if (ImGui::BeginPopupModal("CreateNewScenePopup", NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
         static char buf[64] = "";
@@ -240,7 +227,7 @@ void EditorManager::DrawUI()
             {
                 SceneManager::Instance().CreateScene(buf);
                 ImGui::CloseCurrentPopup();
-                memset(buf, 0, sizeof(buf)); // Reset buffer
+                memset(buf, 0, sizeof(buf));
             }
         }
         ImGui::SetItemDefaultFocus();
@@ -262,7 +249,7 @@ void EditorManager::DrawUI()
     // プロファイラ描画
     Profiler::Instance().DrawProfilerWindow();
 
-    // File Browser Draw
+    // ImGuiFileDialog描画
     ImGuiFileBrowser::Instance().Draw();
 }
 
@@ -287,9 +274,9 @@ void EditorManager::DrawGameView()
 			// 利用可能サイズを取得
 			ImVec2 availSize = ImGui::GetContentRegionAvail();
 			
-			// 16:9 のアスペクト比を計算
-			float targetAspect = 16.0f / 9.0f;
-			float availAspect = availSize.x / availSize.y;
+			// 16:9 アスペクト比
+			float targetAspect	= 16.0f / 9.0f;
+			float availAspect	= availSize.x / availSize.y;
 
 			ImVec2 imageSize;
 			if (availAspect > targetAspect)
@@ -330,8 +317,6 @@ void EditorManager::DrawGameView()
                                 ImVec2(windowPos.x + contentMax.x, windowPos.y + contentMax.y), true);
             
             // GameView の矩形範囲 (タイトルバーなどを考慮)
-            // ImGui::Image が描画された領域に合わせるのがベストだが、
-            // 簡易的にウィンドウサイズを使う
             ImVec2 vMin = ImGui::GetWindowContentRegionMin();
             ImVec2 vMax = ImGui::GetWindowContentRegionMax();
             vMin.x += windowPos.x;
@@ -356,15 +341,13 @@ void EditorManager::DrawGameView()
             // ギズモ有効時
             if (m_gizmoType != -1 && sel->HasComponent<TransformComponent>())
             {
-                auto tc = sel->GetComponent<TransformComponent>();
+                auto trans = sel->GetComponent<TransformComponent>();
                 
                 // 現在の Transform から行列を作成
-                Math::Matrix worldMat = tc->GetWorldMatrix(); // SRT合成済み行列を貰うか、自分で作る
-                // TransformComponent::GetWorldMatrix() はキャッシュかもしれんので都度計算する方が安全かも
-                // ここでは tc->GetPosition() などから再構築
-                Math::Vector3 pos = tc->GetPosition();
-                Math::Vector3 rot = tc->GetRotation();
-                Math::Vector3 scale = tc->GetScale();
+                Math::Matrix worldMat = trans->GetWorldMatrix();
+                Math::Vector3 pos = trans->GetPosition();
+                Math::Vector3 rot = trans->GetRotation();
+                Math::Vector3 scale = trans->GetScale();
                 
                 Math::Matrix rotMat = Math::Matrix::CreateFromYawPitchRoll(
                     DirectX::XMConvertToRadians(rot.y),
@@ -391,16 +374,7 @@ void EditorManager::DrawGameView()
                 
                 // 使用終了: コマンド生成
                 if (!isUsing && m_isGizmoUsing)
-                {
-                    // 変化があった場合のみコマンド登録
-                    // (浮動小数点の誤差を考慮してもいいが、単純比較でも一旦OK)
-                    // if (memcmp(&m_gizmoStartMatrix, &worldMat, sizeof(Math::Matrix)) != 0) 
-                    // Matrixの比較演算子 != があればそれを使う
-                    
-                    // ここでの worldMat は「操作後」の値になっているはずだが、
-                    // Manipulate関数は「描画＆入力反映」を行うため、
-                    // IsUsing() が false になったフレームでは worldMat は「最終確定値」である。
-                    
+                {   
                     // コマンド作成
                     auto cmd = std::make_shared<CmdTransform>(sel, m_gizmoStartMatrix, worldMat);
                     CommandManager::Instance().Execute(cmd);
@@ -414,16 +388,16 @@ void EditorManager::DrawGameView()
                     float matrixTranslation[3], matrixRotation[3], matrixScale[3];
                     ImGuizmo::DecomposeMatrixToComponents(&worldMat._11, matrixTranslation, matrixRotation, matrixScale);
 
-                    tc->SetPosition({ matrixTranslation[0], matrixTranslation[1], matrixTranslation[2] });
-                    tc->SetRotation({ matrixRotation[0], matrixRotation[1], matrixRotation[2] });
-                    tc->SetScale({ matrixScale[0], matrixScale[1], matrixScale[2] });
+                    trans->SetPosition	({ matrixTranslation[0]	, matrixTranslation[1]	, matrixTranslation[2]	});
+                    trans->SetRotation	({ matrixRotation[0]	, matrixRotation[1]		, matrixRotation[2]		});
+                    trans->SetScale		({ matrixScale[0]		, matrixScale[1]		, matrixScale[2]		});
                 }
             }
             // クリップ矩形の復元
             ImGui::PopClipRect();
         }
 
-        // --- Undo/Redo Shortcuts (Game View Focused) ---
+        // --- Undo/Redo
         if (ImGui::IsWindowFocused())
         {
             if (ImGui::GetIO().KeyCtrl)
@@ -468,9 +442,9 @@ void EditorManager::DrawInspector()
 		DrawComponentCollider(sel);
 		
 		// Action
-		if (auto apc = sel->GetComponent<ActionPlayerComponent>())
+		if (auto player = sel->GetComponent<ActionPlayerComponent>())
 		{
-			apc->DrawInspector();
+			player->DrawInspector();
 		}
 
 		ImGui::Separator();
@@ -497,10 +471,10 @@ void EditorManager::DrawInspector()
 			{
 				if (ImGui::MenuItem("Render"))
 				{
-					auto rc = std::make_shared<RenderComponent>();
+					auto render = std::make_shared<RenderComponent>();
 					// デフォルトはStaticにしておく
-					rc->SetModelData(""); 
-					sel->AddComponent(rc);
+					render->SetModelData(""); 
+					sel->AddComponent(render);
 				}
 			}
 
@@ -512,7 +486,6 @@ void EditorManager::DrawInspector()
 				}
 			}
 
-			// Action Components
 			if (!sel->HasComponent<ActionPlayerComponent>())
 			{
 				if (ImGui::MenuItem("Action Player"))
@@ -524,42 +497,43 @@ void EditorManager::DrawInspector()
 			ImGui::Separator();
 			ImGui::TextDisabled("-- Presets --");
 
-			// Presets (Render + Collider combos)
+			// Presets (Render + Collider)
 			if (!sel->HasComponent<RenderComponent>())
 			{
-				// ... (既存の便利セット)
-				// Static Model (Stage/Terrain)
+				// Static Model
 				if (ImGui::MenuItem("Stage Object"))
 				{
-					auto rc = std::make_shared<RenderComponent>();
-					rc->SetModelData(""); 
-					sel->AddComponent(rc);
+					auto render = std::make_shared<RenderComponent>();
+					render->SetModelData("");
+					sel->AddComponent(render);
 
-					if (!sel->HasComponent<ColliderComponent>()) {
-						auto cc = std::make_shared<ColliderComponent>();
-						cc->SetEnableModel(true); 
-						cc->SetEnableSphere(false);
-						cc->SetEnableBox(false);
-						cc->SetCollisionType(KdCollider::TypeGround);
-						sel->AddComponent(cc);
+					if (!sel->HasComponent<ColliderComponent>())
+					{
+						auto collider = std::make_shared<ColliderComponent>();
+						collider->SetEnableModel(true);
+						collider->SetEnableSphere(false);
+						collider->SetEnableBox(false);
+						collider->SetCollisionType(KdCollider::TypeGround);
+						sel		->AddComponent(collider);
 					}
 					ImGui::CloseCurrentPopup();
 				}
 
-				// Dynamic Model (Character/Player)
+				// Dynamic Model
 				if (ImGui::MenuItem("Character Object"))
 				{
-					auto rc = std::make_shared<RenderComponent>();
-					rc->SetModelWork(""); 
-					sel->AddComponent(rc);
+					auto render = std::make_shared<RenderComponent>();
+					render->SetModelWork(""); 
+					sel->AddComponent(render);
 
-					if (!sel->HasComponent<ColliderComponent>()) {
-						auto cc = std::make_shared<ColliderComponent>();
-						cc->SetEnableModel(false);
-						cc->SetEnableSphere(true);  
-						cc->SetEnableBox(true);     
-						cc->SetCollisionType(KdCollider::TypeBump);
-						sel->AddComponent(cc);
+					if (!sel->HasComponent<ColliderComponent>()) 
+					{
+						auto collider = std::make_shared<ColliderComponent>();
+						collider->SetEnableModel(false);
+						collider->SetEnableSphere(true);
+						collider->SetEnableBox(true);
+						collider->SetCollisionType(KdCollider::TypeBump);
+						sel		->AddComponent(collider);
 					}
 					ImGui::CloseCurrentPopup();
 				}
@@ -581,20 +555,19 @@ void EditorManager::DrawComponentTransform(std::shared_ptr<Entity> sel)
 
     if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
     {
-        auto tc = sel->GetComponent<TransformComponent>();
-        if (tc)
+        auto trans = sel->GetComponent<TransformComponent>();
+        if (trans)
         {
-            // Enable Toggle
-            bool enable = tc->IsEnable();
-            if (ImGui::Checkbox("Enable##Transform", &enable)) tc->SetEnable(enable);
+            bool enable = trans->IsEnable();
+            if (ImGui::Checkbox("Enable##Transform", &enable)) trans->SetEnable(enable);
 
-            Math::Vector3 pos = tc->GetPosition();
-            Math::Vector3 rot = tc->GetRotation();
-            Math::Vector3 scale = tc->GetScale();
+            Math::Vector3 pos	= trans->GetPosition();
+            Math::Vector3 rot	= trans->GetRotation();
+            Math::Vector3 scale = trans->GetScale();
 
-            if (ImGui::DragFloat3("Position", &pos.x, 0.1f)) tc->SetPosition(pos);
-            if (ImGui::DragFloat3("Rotation", &rot.x, 0.1f)) tc->SetRotation(rot);
-            if (ImGui::DragFloat3("Scale", &scale.x, 0.1f)) tc->SetScale(scale);
+            if (ImGui::DragFloat3("Position", &pos.x, 0.1f))	trans->SetPosition(pos);
+            if (ImGui::DragFloat3("Rotation", &rot.x, 0.1f))	trans->SetRotation(rot);
+            if (ImGui::DragFloat3("Scale"	, &scale.x, 0.1f))	trans->SetScale(scale);
         }
     }
 }
@@ -605,25 +578,33 @@ void EditorManager::DrawComponentRender(std::shared_ptr<Entity> sel)
 
     if (ImGui::CollapsingHeader("Render", ImGuiTreeNodeFlags_DefaultOpen))
     {
-        auto rc = sel->GetComponent<RenderComponent>();
-        if (rc)
+        auto render = sel->GetComponent<RenderComponent>();
+        if (render)
         {
-            // Enable Toggle
-            bool enable = rc->IsEnable();
-            if (ImGui::Checkbox("Enable##Render", &enable)) rc->SetEnable(enable);
-
+            bool enable = render->IsEnable();
+			if (ImGui::Checkbox("Enable##Render", &enable))
+			{
+				render->SetEnable(enable);
+			}
             // モデルパス編集
             char pathBuffer[MAX_PATH] = "";
-            if (!rc->GetModelPath().empty()) {
-                strncpy_s(pathBuffer, rc->GetModelPath().c_str(), _TRUNCATE);
+            if (!render->GetModelPath().empty()) 
+			{
+                strncpy_s(pathBuffer, render->GetModelPath().c_str(), _TRUNCATE);
             }
 
             // InputText
-            if (ImGui::InputText("Model Path", pathBuffer, sizeof(pathBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
-            {
-                if (rc->IsDynamic()) rc->SetModelWork(pathBuffer);
-                else rc->SetModelData(pathBuffer);
-            }
+			if (ImGui::InputText("Model Path", pathBuffer, sizeof(pathBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
+			{
+				if (render->IsDynamic())
+				{
+					render->SetModelWork(pathBuffer);
+				}
+				else
+				{
+					render->SetModelData(pathBuffer);
+				}
+			}
             ImGui::SameLine();
             if (ImGui::Button("...##ModelSelect"))
             {
@@ -631,25 +612,22 @@ void EditorManager::DrawComponentRender(std::shared_ptr<Entity> sel)
                     "SelectModel", 
                     "Select Model File", 
                     { ".gltf", ".glb", ".obj", ".fbx" }, // Common model formats
-                    [rc](const std::string& path) 
+                    [render](const std::string& path)
                     {
-                        // Convert absolute path to relative if possible? 
-                        // For now, use full path or maybe just filename if in specific dir. 
-                        // Let's assume path is usable. 
-                        // Actually, Asset system usually expects relative path from Asset/
-                        // But FileBrowser returns full path. 
-                        // Let's try to make it relative to "Current Directory" if run from project root.
-                        // std::filesystem::relative(path, std::filesystem::current_path()).string();
-
-                        // Simple hack: if path contains "Asset", substring it.
-                        // Ideally we should use std::filesystem::relative.
                         std::string setPath = path;
-                        try {
+                        try 
+						{
                             setPath = std::filesystem::relative(path, std::filesystem::current_path()).string();
                         } catch (...) {}
 
-                        if (rc->IsDynamic()) rc->SetModelWork(setPath);
-                        else rc->SetModelData(setPath);
+						if (render->IsDynamic())
+						{
+							render->SetModelWork(setPath);
+						}
+						else
+						{
+							render->SetModelData(setPath);
+						}
                     });
             }
 
@@ -659,31 +637,42 @@ void EditorManager::DrawComponentRender(std::shared_ptr<Entity> sel)
                 if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
                 {
                     const char* path = (const char*)payload->Data;
-                    if (rc->IsDynamic())
-                        rc->SetModelWork(path);
+                    if (render->IsDynamic())
+                        render->SetModelWork(path);
                     else
-                        rc->SetModelData(path);
+                        render->SetModelData(path);
                 }
                 ImGui::EndDragDropTarget();
             }
             
             // Dynamic Toggle
-            bool isDynamic = rc->IsDynamic();
-            if (ImGui::Checkbox("Dynamic (Animation)", &isDynamic))
-            {
-                // Re-load with new mode
-                if (isDynamic)
-                    rc->SetModelWork(rc->GetModelPath());
-                else
-                    rc->SetModelData(rc->GetModelPath());
-            }
+            bool isDynamic = render->IsDynamic();
+			if (ImGui::Checkbox("Dynamic (Animation)", &isDynamic))
+			{
+				// Re-load with new mode
+				if (isDynamic)
+				{
+					render->SetModelWork(render->GetModelPath());
+				}
+
+				else
+				{
+					render->SetModelData(render->GetModelPath());
+				}
+			}
 
             // Reload & File Select
-            if (ImGui::Button("Reload"))
-            {
-                if (rc->IsDynamic()) rc->SetModelWork(rc->GetModelPath());
-                else rc->SetModelData(rc->GetModelPath());
-            }
+			if (ImGui::Button("Reload"))
+			{
+				if (render->IsDynamic())
+				{
+					render->SetModelWork(render->GetModelPath());
+				}
+				else
+				{
+					render->SetModelData(render->GetModelPath());
+				}
+			}
             ImGui::SameLine();
             
             if (ImGui::Button("..."))
@@ -692,16 +681,23 @@ void EditorManager::DrawComponentRender(std::shared_ptr<Entity> sel)
                     "ModelSelectPopup",
                     "Select Model",
                     { ".gltf", ".glb", ".obj", ".fbx" },
-                    [rc](const std::string& path)
+                    [render](const std::string& path)
                     {
                         // リソースパスの相対化などは適宜
                         std::string setPath = path;
-                        try {
+                        try 
+						{
                             setPath = std::filesystem::relative(path, std::filesystem::current_path()).string();
                         } catch(...) {}
 
-                        if (rc->IsDynamic()) rc->SetModelWork(setPath);
-                        else rc->SetModelData(setPath);
+						if (render->IsDynamic())
+						{
+							render->SetModelWork(setPath);
+						}
+						else
+						{
+							render->SetModelData(setPath);
+						}
                     });
             }
         }
@@ -714,29 +710,29 @@ void EditorManager::DrawComponentCollider(std::shared_ptr<Entity> sel)
 
     if (ImGui::CollapsingHeader("Collider", ImGuiTreeNodeFlags_DefaultOpen))
     {
-        auto cc = sel->GetComponent<ColliderComponent>();
+        auto collider = sel->GetComponent<ColliderComponent>();
 
-        // Enable / Disable
-        bool enable = cc->IsEnable(); // uses Component::IsEnable if not shadowed, or derived
-        if (ImGui::Checkbox("Enable##Collider", &enable)) {
-            cc->SetEnable(enable); // uses virtual or derived
+        bool enable = collider->IsEnable(); 
+        if (ImGui::Checkbox("Enable##Collider", &enable))
+		{
+            collider->SetEnable(enable); 
         }
 
         ImGui::SameLine();
 
-        // Debug Draw Toggle
-        bool debug = cc->IsDebugDrawEnabled();
-        if (ImGui::Checkbox("Show Wireframe", &debug)) {
-            cc->SetDebugDrawEnabled(debug);
+        bool debug = collider->IsDebugDrawEnabled();
+        if (ImGui::Checkbox("Show Wireframe", &debug)) 
+		{
+            collider->SetDebugDrawEnabled(debug);
         }
 
         ImGui::Separator();
         
         // RenderComponentの状態を確認
         bool isDynamicMode = false;
-        if (auto rc = sel->GetComponent<RenderComponent>())
+        if (auto render = sel->GetComponent<RenderComponent>())
         {
-            isDynamicMode = rc->IsDynamic();
+            isDynamicMode = render->IsDynamic();
         }
 
         // ---- Collision Types ----
@@ -746,7 +742,7 @@ void EditorManager::DrawComponentCollider(std::shared_ptr<Entity> sel)
         {
             // Dynamic
             ImGui::TextDisabled("Fixed: Bump");
-            if (cc->GetCollisionType() != KdCollider::TypeBump)
+            if (collider->GetCollisionType() != KdCollider::TypeBump)
 			{
 
             }
@@ -754,7 +750,7 @@ void EditorManager::DrawComponentCollider(std::shared_ptr<Entity> sel)
         else
         {
             // Static
-            UINT type = cc->GetCollisionType();
+            UINT type = collider->GetCollisionType();
             
             // Preview
             std::string typePreview = "";
@@ -789,7 +785,7 @@ void EditorManager::DrawComponentCollider(std::shared_ptr<Entity> sel)
                     if (isDamage) newType |= KdCollider::TypeDamage;
                     if (isSight)  newType |= KdCollider::TypeSight;
                     if (isEvent)  newType |= KdCollider::TypeEvent;
-                    cc->SetCollisionType(newType);
+                    collider->SetCollisionType(newType);
                 }
                 ImGui::EndCombo();
             }
@@ -803,46 +799,50 @@ void EditorManager::DrawComponentCollider(std::shared_ptr<Entity> sel)
             ImGui::Text("Character Shapes");
             
             // Sphere
-            bool useSphere = cc->GetEnableSphere();
-            if (ImGui::Checkbox("Sphere", &useSphere)) {
-                cc->SetEnableSphere(useSphere);
+            bool useSphere = collider->GetEnableSphere();
+            if (ImGui::Checkbox("Sphere", &useSphere))
+			{
+                collider->SetEnableSphere(useSphere);
             }
             if (useSphere)
             {
                 ImGui::Indent();
-                float radius = cc->GetSphereRadius();
-                if (ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f)) {
-                    cc->SetSphereRadius(radius);
+                float radius = collider->GetSphereRadius();
+                if (ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f))
+				{
+                    collider->SetSphereRadius(radius);
                 }
                 ImGui::Unindent();
             }
 
             // Box
-            bool useBox = cc->GetEnableBox();
-            if (ImGui::Checkbox("Box", &useBox)) {
-                cc->SetEnableBox(useBox);
+            bool useBox = collider->GetEnableBox();
+            if (ImGui::Checkbox("Box", &useBox)) 
+			{
+                collider->SetEnableBox(useBox);
             }
             if (useBox)
             {
                 ImGui::Indent();
-                Math::Vector3 extents = cc->GetBoxExtents();
-                if (ImGui::DragFloat3("Half Size", &extents.x, 0.1f, 0.0f)) {
-                    cc->SetBoxExtents(extents);
+                Math::Vector3 extents = collider->GetBoxExtents();
+                if (ImGui::DragFloat3("Half Size", &extents.x, 0.1f, 0.0f)) 
+				{
+                    collider->SetBoxExtents(extents);
                 }
                 ImGui::Unindent();
             }
 
 
-            if (cc->GetEnableModel()) cc->SetEnableModel(false);
+            if (collider->GetEnableModel()) collider->SetEnableModel(false);
         }
         else
         {
             ImGui::Text("Stage Mesh");
             ImGui::Text("Mesh Collision: Enabled (Always)");
             
-            if (!cc->GetEnableModel()) cc->SetEnableModel(true);
-            if (cc->GetEnableSphere()) cc->SetEnableSphere(false);
-            if (cc->GetEnableBox())    cc->SetEnableBox(false);
+            if (!collider->GetEnableModel()) collider->SetEnableModel(true);
+            if (collider->GetEnableSphere()) collider->SetEnableSphere(false);
+            if (collider->GetEnableBox())    collider->SetEnableBox(false);
 
         }
 
@@ -850,9 +850,10 @@ void EditorManager::DrawComponentCollider(std::shared_ptr<Entity> sel)
         
         if (isDynamicMode)
         {
-            Math::Vector3 offset = cc->GetOffset();
-            if (ImGui::DragFloat3("Offset", &offset.x, 0.1f)) {
-                cc->SetOffset(offset);
+            Math::Vector3 offset = collider->GetOffset();
+            if (ImGui::DragFloat3("Offset", &offset.x, 0.1f)) 
+			{
+                collider->SetOffset(offset);
             }
         }
     }

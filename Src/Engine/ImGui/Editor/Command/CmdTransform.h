@@ -26,16 +26,16 @@ private:
 		auto ent = m_target.lock();
 		if (!ent) return;
 
-		auto tc = ent->GetComponent<TransformComponent>();
-		if (!tc) return;
+		auto cTrans = ent->GetComponent<TransformComponent>();
+		if (!cTrans) return;
 
-		// ImGuizmoの分解関数を使用 (Euler Deg が返ってくるのでそのままセットできる)
-		float t[3], r[3], s[3];
-		ImGuizmo::DecomposeMatrixToComponents(&mat._11, t, r, s);
+		// ImGuizmoの分解関数を使用
+		float trans[3], rot[3], scale[3];
+		ImGuizmo::DecomposeMatrixToComponents(&mat._11, trans, rot, scale);
 
-		tc->SetPosition({ t[0], t[1], t[2] });
-		tc->SetRotation({ r[0], r[1], r[2] });
-		tc->SetScale({ s[0], s[1], s[2] });
+		cTrans->SetPosition({	trans[0], trans[1]	, trans[2] });
+		cTrans->SetRotation({	rot[0]	, rot[1]	, rot[2] });
+		cTrans->SetScale({		scale[0], scale[1]	, scale[2] });
 	}
 
 	std::weak_ptr<Entity> m_target;

@@ -1,24 +1,22 @@
 ﻿#pragma once
 
-// Framework Includes (Excluding GameObject)
+// Framework
 // ============================================
-// Master Header
 #include "Framework/KdFramework.h"
 
 // ImGui
 #include "ImGui/ImGuiManager.h"
 #include "ImGui/Log/Logger.h"
 
-
-// Engine Core Layout
+// Engine
 // ============================================
-// ECS Base
 #include "ECS/Component.h"
 #include "ECS/Entity.h"
 
-#include "Components/RenderComponent.h"
-#include "Components/TransformComponent.h"
-#include "Components/ColliderComponent.h"
+#include "Components/Render/RenderComponent.h"
+#include "Components/Transform/TransformComponent.h"
+#include "Components/Collider/ColliderComponent.h"
+#include "Components/Action/Player/ActionPlayerComponent.h"
 
 // System
 #include "Core/Engine.h"

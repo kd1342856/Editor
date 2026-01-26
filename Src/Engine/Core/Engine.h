@@ -9,9 +9,8 @@ public:
 	void Release();
 
 	void Quit() { m_endFlag = true; }
-	void SetMouseGrabbed(bool enable); // Added
+	void SetMouseGrabbed(bool enable); 
 
-	// Accessors
 	int GetWindowWidth() const { return m_windowWidth; }
 	int GetWindowHeight() const { return m_windowHeight; }
 	HWND GetWindowHandle() const { return m_window.GetWndHandle(); }
@@ -24,8 +23,6 @@ private:
 	void KdPostUpdate();
 	void KdBeginDraw(bool usePostProcess = true);
 	void KdPostDraw();
-
-
 
 	void PreUpdate();
 	void Update();

@@ -2,8 +2,8 @@
 
 static ImGuiTextBuffer     Buf;
 static ImGuiTextFilter     Filter;
-static std::vector<int>    LineOffsets;        // Index to lines offset. We maintain this with AddLog() calls, allowing us to have a random access on lines
-static bool                AutoScroll = true;  // Keep scrolling if already at the bottom
+static std::vector<int>    LineOffsets;        
+static bool                AutoScroll = true;  
 
 void Logger::Log(const std::string& category, const std::string& msg)
 {
@@ -26,7 +26,10 @@ void Logger::DrawImGui()
 
 void Logger::DrawAddLog()
 {
-	if (ImGui::Button("Clear")) { Buf.clear(); LineOffsets.clear(); LineOffsets.push_back(0); }
+	if (ImGui::Button("Clear"))
+	{ 
+		Buf.clear(); LineOffsets.clear(); LineOffsets.push_back(0); 
+	}
 	ImGui::SameLine();
 	bool copy = ImGui::Button("Copy");
 	ImGui::SameLine();
@@ -47,7 +50,9 @@ void Logger::DrawAddLog()
 			const char* line_start = buf + LineOffsets[line_no];
 			const char* line_end = (line_no + 1 < LineOffsets.size()) ? (buf + LineOffsets[line_no + 1] - 1) : buf_end;
 			if (Filter.PassFilter(line_start, line_end))
+			{
 				ImGui::TextUnformatted(line_start, line_end);
+			}
 		}
 	}
 	else
@@ -57,8 +62,9 @@ void Logger::DrawAddLog()
 	ImGui::PopStyleVar();
 
 	if (AutoScroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
+	{
 		ImGui::SetScrollHereY(1.0f);
-
+	}
 	ImGui::EndChild();
 }
 
@@ -72,6 +78,10 @@ void Logger::Add(const char* fmt, ...)
 	Buf.appendfv(fmt, args);
 	va_end(args);
 	for (int new_size = Buf.size(); old_size < new_size; old_size++)
+	{
 		if (Buf[old_size] == '\n')
+		{
 			LineOffsets.push_back(old_size + 1);
+		}
+	}
 }

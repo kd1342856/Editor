@@ -6,9 +6,8 @@ void ImGuiManager::GuiInit()
 {
 	m_editor = std::make_shared<EditorManager>();
 	m_editor->Init();
-	// if (m_editor) m_editor->SetMode(EditorMode::Game);
 
-	// Setup Dear ImGui context
+	// Dear ImGui コンテキスト
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui::StyleColorsClassic();
@@ -21,7 +20,6 @@ void ImGuiManager::GuiInit()
 	ImFontConfig config;
 	config.MergeMode = true;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	// io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Viewports can be unstable, optional
 
 	ImGuiStyle& style = ImGui::GetStyle();
 	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -31,7 +29,6 @@ void ImGuiManager::GuiInit()
 	}
 
 	io.Fonts->AddFontDefault();
-	// Windows Font for Japanese
 	io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\msgothic.ttc", 13.0f, &config, glyphRangesJapanese);
 
 	m_isReleased = false;
@@ -45,10 +42,9 @@ void ImGuiManager::GuiProcess()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 	
-	// Create a full-screen DockSpace
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
-	// Main Editor Draw
+	// メインエディタDraw関数
 	if (m_editor)
 	{
 		m_editor->Draw();
@@ -56,7 +52,7 @@ void ImGuiManager::GuiProcess()
 		m_editor->DrawUI();
 	}
 
-	// Debug Callbacks
+	// デバッグ
 	for (auto& [id, cb] : m_debugCallbacks)
 	{
 		if (cb) cb();
@@ -64,7 +60,6 @@ void ImGuiManager::GuiProcess()
 
 	ImGui::Render();
 	
-	// Ensure BackBuffer is bound for ImGui Binding
 	if (auto backBuffer = KdDirect3D::Instance().WorkBackBuffer())
 	{
 		ID3D11RenderTargetView* rtv = backBuffer->WorkRTView();
@@ -84,7 +79,6 @@ void ImGuiManager::GuiRelease()
 {
 	if (m_isReleased) return;
 	
-	// Release EditorManager resources BEFORE destroying ImGui context
 	m_editor.reset();
 
 	if (ImGui::GetCurrentContext())
@@ -99,13 +93,10 @@ void ImGuiManager::GuiRelease()
 
 void ImGuiManager::SetMode(EditorMode m)
 {
-	// if (m_editor) m_editor->SetMode(m);
 }
 
 void ImGuiManager::ToggleMode()
 {
-	// if (!m_editor) return;
-	// m_editor->SetMode(m_editor->IsEditorMode() ? EditorMode::Game : EditorMode::Editor);
 }
 
 void ImGuiManager::RegisterDebugWindow(void* id, std::function<void()> cb)
@@ -125,7 +116,6 @@ void ImGuiManager::SetCameras(const std::shared_ptr<CameraBase>& tps,
 	if (m_editor) m_editor->SetCameras(tps, build, editor);
 }
 
-// Mouse Helpers
 bool ImGuiManager::GetGameViewUVFromMouse(float& u, float& v) const
 {
 	return false; 

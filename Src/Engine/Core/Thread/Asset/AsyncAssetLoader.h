@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../ThreadManager.h"
 
 // 非同期アセットローダー
@@ -7,11 +7,7 @@ class AsyncAssetLoader
 {
 public:
 
-	static AsyncAssetLoader& Instance()
-	{
-		static AsyncAssetLoader instance;
-		return instance;
-		}
+
 
 	// 初期化
 	void Init();
@@ -23,15 +19,9 @@ public:
 	void Release();
 
 	// テクスチャの非同期ロード
-	// ・戻り値：KdTextureへのスマートポインタ
-	// ・読み込み完了までは「1x1の白テクスチャ」が入っている
-	// ・キャッシュがあればそれを返す
 	std::shared_ptr<KdTexture> LoadTextureAsync(const std::string& filename, Job::Priority priority = Job::Priority::Normal);
 
 	// モデルの非同期ロード
-	// ・戻り値：KdModelDataへのスマートポインタ
-	// ・読み込み完了までは「空のモデル」が入っている
-	// ・キャッシュがあればそれを返す
 	std::shared_ptr<KdModelData> LoadModelAsync(const std::string& filename, Job::Priority priority = Job::Priority::Normal);
 
 private:
@@ -51,4 +41,10 @@ private:
 	// (テクスチャ差し替えなど)
 	std::mutex m_callbackMutex;
 	std::vector<std::function<void()>> m_completionCallbacks;
+public:
+	static AsyncAssetLoader& Instance()
+	{
+		static AsyncAssetLoader instance;
+		return instance;
+	}
 };

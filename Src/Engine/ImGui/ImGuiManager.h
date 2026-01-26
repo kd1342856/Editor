@@ -4,22 +4,11 @@ class Entity;
 class EditorManager;
 class CameraBase;
 class GameScene;
-enum class EditorMode; // Forward decl
-
-class Entity;
-class EditorManager;
-class CameraBase;
-class GameScene;
-enum class EditorMode; // Forward decl
+enum class EditorMode; 
 
 class ImGuiManager
 {
 public:
-	static ImGuiManager& Instance()
-	{
-		static ImGuiManager Instance;
-		return Instance;
-	}
 
 	void GuiInit();
 	void GuiProcess();
@@ -52,4 +41,10 @@ private:
 	std::unordered_map<void*, std::function<void()>> m_debugCallbacks;
 	
 	bool m_isReleased = false;
+public:
+	static ImGuiManager& Instance()
+	{
+		static ImGuiManager Instance;
+		return Instance;
+	}
 };

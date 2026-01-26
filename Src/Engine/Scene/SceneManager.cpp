@@ -2,14 +2,6 @@
 #include "Scene.h"
 #include "../../Application/Scene/BaseScene/BaseScene.h"
 
-void SceneManager::Init()
-{
-}
-
-void SceneManager::PreUpdate()
-{
-}
-
 void SceneManager::Update()
 {
 	// Scene Transition
@@ -26,10 +18,9 @@ void SceneManager::Update()
 		}
 		else
 		{
-			// Not registered? Try dynamic BaseScene
-			auto s = std::make_shared<BaseScene>();
-			s->SetName(m_nextSceneName);
-			m_currentScene = s;
+			auto scene = std::make_shared<BaseScene>();
+			scene->SetName(m_nextSceneName);
+			m_currentScene = scene;
 		}
 
         m_currentSceneName = m_nextSceneName;
@@ -68,10 +59,8 @@ void SceneManager::PreDraw()
 
 void SceneManager::Draw()
 {
-	// 3D Drawing
 	if (m_currentScene) m_currentScene->Draw();
 
-	// Render States are usually managed by ShaderManager
 	KdShaderManager::Instance().m_StandardShader.BeginLit();
 	for (auto& entity : m_entityList)
 	{
@@ -148,13 +137,11 @@ std::vector<std::string> SceneManager::GetSceneNames()
 {
 	std::vector<std::string> names;
 	
-	// 1. Registered Scenes
 	for (const auto& pair : m_sceneRegistry)
 	{
 		names.push_back(pair.first);
 	}
 
-	// 2. Scan JSON files in Asset/Data/Scene/
 	std::filesystem::path sceneDir = "Asset/Data/Scene";
 	if (std::filesystem::exists(sceneDir))
 	{
@@ -163,7 +150,6 @@ std::vector<std::string> SceneManager::GetSceneNames()
 			if (entry.path().extension() == ".json")
 			{
 				std::string name = entry.path().stem().string();
-				// Avoid duplicates if already registered
 				if (m_sceneRegistry.find(name) == m_sceneRegistry.end())
 				{
 					names.push_back(name);
@@ -177,10 +163,8 @@ std::vector<std::string> SceneManager::GetSceneNames()
 
 void SceneManager::CreateScene(const std::string& name)
 {
-	// Simply creating a JSON file is enough for BaseScene to load it later
 	std::string path = "Asset/Data/Scene/" + name + ".json";
 	
-	// Create directory if not exists
 	std::filesystem::path dir = "Asset/Data/Scene";
 	if (!std::filesystem::exists(dir)) std::filesystem::create_directories(dir);
 
@@ -189,20 +173,18 @@ void SceneManager::CreateScene(const std::string& name)
 		std::ofstream ofs(path);
 		if (ofs.is_open())
 		{
-			// Basic empty scene JSON
 			ofs << "{ \"Entities\": [], \"Camera\": {} }";
 			ofs.close();
 		}
 	}
 
-	// If it's not a registered class scene, we treat it as a BaseScene
 	if (m_sceneRegistry.find(name) == m_sceneRegistry.end())
 	{
-		// Auto-register a factory for BaseScene
-		RegisterScene(name, [name]() { 
-			auto s = std::make_shared<BaseScene>(); 
-			s->SetName(name); 
-			return s; 
+		RegisterScene(name, [name]()
+		{ 
+			auto scene = std::make_shared<BaseScene>(); 
+			scene->SetName(name); 
+			return scene; 
 		});
 	}
 

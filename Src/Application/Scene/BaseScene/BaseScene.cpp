@@ -2,6 +2,7 @@
 #include "../../../Engine/Scene/SceneManager.h"
 #include "../../../Engine/Serializer/SceneSerializer.h"
 #include "../../../Engine/ImGui/Editor/EditorManager.h" 
+#include "../../../Engine/ECS/EntityManager.h"
 
 void BaseScene::Init()
 {
@@ -9,15 +10,14 @@ void BaseScene::Init()
 
 	std::string path = "Asset/Data/Scene/" + m_name + ".json";
 	std::vector<std::shared_ptr<Entity>> loadedEntities;
-	
-	// Dummy camera ptr (SceneSerializer might need one, but for just entities we can pass null or handle it)
-	std::shared_ptr<CameraBase> cam = nullptr; 
+
+	std::shared_ptr<CameraBase> cam = nullptr;
 
 	if (SceneSerializer::Load(path, loadedEntities, cam))
 	{
-		for (auto& e : loadedEntities)
+		for (auto& entity : loadedEntities)
 		{
-			SceneManager::Instance().AddEntity(e);
+			EntityManager::Instance().AddEntity(entity);
 		}
 	}
 }

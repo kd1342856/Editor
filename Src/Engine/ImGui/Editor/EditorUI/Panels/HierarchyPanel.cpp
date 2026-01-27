@@ -1,7 +1,6 @@
-#include "EnginePch.h"
-#include "HierarchyPanel.h"
+﻿#include "HierarchyPanel.h"
 #include "../../EditorManager.h"
-#include "imgui/imgui.h"
+#include "../../../../ECS/EntityManager.h"
 
 namespace EditorPanels
 {
@@ -11,16 +10,16 @@ namespace EditorPanels
 		// Temporary List
 		if (ImGui::TreeNode("Entities"))
 		{
-			auto& list = editor.GetEntityList();
+			auto& list = EntityManager::Instance().GetEntityList();
 			for (size_t i = 0; i < list.size(); ++i)
 			{
-				auto& e = list[i];
-				if (!e) continue;
+				auto& entity = list[i];
+				if (!entity) continue;
 				
 				ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Leaf;
 				// if (editor.GetSelectedIndex() == i) flags |= ImGuiTreeNodeFlags_Selected;
 
-				if (ImGui::TreeNodeEx(e->GetName().c_str(), flags))
+				if (ImGui::TreeNodeEx(entity->GetName().c_str(), flags))
 				{
 					if (ImGui::IsItemClicked())
 					{

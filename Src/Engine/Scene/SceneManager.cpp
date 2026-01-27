@@ -1,6 +1,7 @@
 ﻿#include "SceneManager.h"
 #include "Scene.h"
 #include "../../Application/Scene/BaseScene/BaseScene.h"
+#include "../ECS/EntityManager.h"
 
 void SceneManager::Update()
 {
@@ -8,9 +9,9 @@ void SceneManager::Update()
 	if (!m_nextSceneName.empty())
 	{
 		if (m_currentScene) m_currentScene->Release();
-		ClearEntities();
-		
-		
+		EntityManager::Instance().ClearEntities();
+
+
 		auto it = m_sceneRegistry.find(m_nextSceneName);
 		if (it != m_sceneRegistry.end())
 		{
@@ -23,7 +24,7 @@ void SceneManager::Update()
 			m_currentScene = scene;
 		}
 
-        m_currentSceneName = m_nextSceneName;
+		m_currentSceneName = m_nextSceneName;
 
 		if (m_currentScene)
 		{
@@ -35,92 +36,35 @@ void SceneManager::Update()
 	// Logic Update
 	if (m_currentScene) m_currentScene->Update();
 
-	for (auto& entity : m_entityList)
-	{
-		entity->Update();
-	}
+
 }
 
 void SceneManager::PostUpdate()
 {
-	for (auto& entity : m_entityList)
-	{
-		entity->PostUpdate();
-	}
+	EntityManager::Instance().PostUpdate();
 }
 
 void SceneManager::PreDraw()
 {
-	for (auto& entity : m_entityList)
-	{
-		entity->PreDraw();
-	}
+	EntityManager::Instance().PreDraw();
 }
 
 void SceneManager::Draw()
 {
 	if (m_currentScene) m_currentScene->Draw();
-
-	KdShaderManager::Instance().m_StandardShader.BeginLit();
-	for (auto& entity : m_entityList)
-	{
-		entity->DrawLit();
-	}
-	KdShaderManager::Instance().m_StandardShader.EndLit();
-
-	KdShaderManager::Instance().m_StandardShader.BeginUnLit();
-	for (auto& entity : m_entityList)
-	{
-		entity->DrawUnLit();
-	}
-	KdShaderManager::Instance().m_StandardShader.EndUnLit();
-    
-    DrawDebug();
-}
-
-void SceneManager::DrawDebug()
-{
-	for (auto& entity : m_entityList)
-	{
-		entity->DrawDebug();
-	}
+	EntityManager::Instance().Draw();
+	EntityManager::Instance().DrawDebug();
 }
 
 void SceneManager::DrawSprite()
 {
-	for (auto& entity : m_entityList)
-	{
-		entity->DrawSprite();
-	}
+	EntityManager::Instance().DrawSprite();
 }
 
 void SceneManager::Release()
 {
 	if (m_currentScene) m_currentScene->Release();
-	ClearEntities();
-}
-
-void SceneManager::AddEntity(const std::shared_ptr<Entity>& entity)
-{
-	if (entity)
-	{
-		entity->Init();
-		m_entityList.push_back(entity);
-	}
-}
-
-void SceneManager::RemoveEntity(const std::shared_ptr<Entity>& entity)
-{
-	auto it = std::remove(m_entityList.begin(), m_entityList.end(), entity);
-	if (it != m_entityList.end())
-	{
-		m_entityList.erase(it, m_entityList.end());
-	}
-}
-
-void SceneManager::ClearEntities()
-{
-	m_entityList.clear();
+	EntityManager::Instance().ClearEntities();
 }
 
 void SceneManager::RegisterScene(const std::string& name, SceneFactory factory)

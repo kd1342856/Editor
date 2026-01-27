@@ -1,9 +1,4 @@
-#include "ActionPlayerComponent.h"
-#include "../ECS/Entity.h"
-#include "TransformComponent.h"
-#include "../../Framework/Input/KdInput.h"
-#include "../../Framework/Math/KdMath.h"
-#include "imgui.h"
+﻿#include "ActionPlayerComponent.h"
 
 void ActionPlayerComponent::Init()
 {

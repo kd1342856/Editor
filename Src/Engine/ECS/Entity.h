@@ -49,8 +49,10 @@ public:
 	Math::Matrix GetMatrix() const;
 
 private:
-	std::string m_name = "Entity";
-	bool m_visible = true;
+	std::string m_name	= "Entity";
+	bool m_initialized	= false;
+	bool m_visible		= true;
+
 	uint8_t m_visibilityFlags = static_cast<uint8_t>(VisibilityFlags::Lit) | static_cast<uint8_t>(VisibilityFlags::UnLit) | static_cast<uint8_t>(VisibilityFlags::Shadow);
 
 	std::unordered_map<std::type_index, std::shared_ptr<Component>> m_components;
@@ -63,7 +65,7 @@ void Entity::AddComponent(const std::shared_ptr<T>& component)
 	if (!component) return;
 
 	component->SetOwner(shared_from_this());
-    component->Init();
+	if (m_initialized) component->Init();
 	m_components[std::type_index(typeid(T))] = component;
 }
 

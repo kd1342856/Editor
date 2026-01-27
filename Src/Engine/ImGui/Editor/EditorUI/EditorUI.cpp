@@ -1,2 +1,0 @@
-﻿#include "EditorUI.h"
-// Stub

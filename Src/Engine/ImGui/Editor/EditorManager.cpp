@@ -8,6 +8,7 @@
 #include "Command/CommandManager.h"
 #include "Command/CmdTransform.h"
 #include "Command/CommandBase.h"
+#include "../../ECS/EntityManager.h"
 
 void EditorManager::Init()
 {
@@ -45,7 +46,7 @@ void EditorManager::Draw()
 	KdShaderManager::Instance().WorkAmbientController().Draw();
 
     // 全エンティティ描画 (SceneManagerから取得)
-    const auto& entities = SceneManager::Instance().GetEntityList();
+    const auto& entities = EntityManager::Instance().GetEntityList();
 
     KdShaderManager::Instance().m_StandardShader.BeginLit();
     for (auto& entity : entities)
@@ -69,10 +70,11 @@ std::string EditorManager::GetUniqueName(const std::string& baseName)
 {
     std::string name = baseName;
     int count = 0;
-    const auto& entities = SceneManager::Instance().GetEntityList();
+    const auto& entities = EntityManager::Instance().GetEntityList();
 
     // 重複チェック
-    auto checkDuplicate = [&](const std::string& n) {
+    auto checkDuplicate = [&](const std::string& n) 
+		{
         for (const auto& entity : entities) {
             if (entity->GetName() == n) return true;
         }
@@ -101,7 +103,7 @@ void EditorManager::DrawHierarchy()
                 entity->SetName(GetUniqueName("Empty Object"));
                 entity->AddComponent(std::make_shared<TransformComponent>());
                 entity->Init();
-                SceneManager::Instance().AddEntity(entity);
+                EntityManager::Instance().AddEntity(entity);
             }
 
 			ImGui::Separator();
@@ -109,14 +111,14 @@ void EditorManager::DrawHierarchy()
             ImGui::EndPopup();
         }
 
-        const auto& entities = SceneManager::Instance().GetEntityList();
+        const auto& entities = EntityManager::Instance().GetEntityList();
 
         // 削除処理 (Deleteキー)
         if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Delete))
         {
             if (auto selected = m_selectedEntity.lock())
             {
-                SceneManager::Instance().RemoveEntity(selected);
+                EntityManager::Instance().RemoveEntity(selected);
                 m_selectedEntity.reset(); // 選択解除
             }
         }
@@ -160,7 +162,7 @@ void EditorManager::DrawUI()
                 if (!currentScene.empty())
                 {
                     std::string path = "Asset/Data/Scene/" + currentScene + ".json";
-                    const auto& entities = SceneManager::Instance().GetEntityList();
+                    const auto& entities = EntityManager::Instance().GetEntityList();
                     SceneSerializer::Save(path, entities, cam);
                 }
             }
@@ -180,8 +182,8 @@ void EditorManager::DrawUI()
                         bool res = SceneSerializer::Load(path, loadedEntities, cam);
                         if (res) 
                         {
-                            SceneManager::Instance().ClearEntities();
-                            for(auto& entity : loadedEntities) SceneManager::Instance().AddEntity(entity);
+                            EntityManager::Instance().ClearEntities();
+                            for(auto& entity : loadedEntities) EntityManager::Instance().AddEntity(entity);
                         }
                     });
             }
@@ -415,7 +417,6 @@ void EditorManager::DrawGameView()
 	}
 	ImGui::End();
 }
-
 
 void EditorManager::DrawInspector()
 {

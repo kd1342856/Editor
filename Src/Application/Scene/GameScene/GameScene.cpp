@@ -1,8 +1,5 @@
 ﻿#include "GameScene.h"
 #include "../../../Engine/Scene/Scene.h"
-#include "../../../Engine/Core/Engine.h"
-#include "../../../Engine/ECS/Entity.h"
-#include "../../../Engine/Components/TransformComponent.h"
 #include "../../../Engine/Scene/SceneManager.h"
 
 void GameScene::Init()

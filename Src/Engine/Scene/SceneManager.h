@@ -11,18 +11,10 @@ public:
 	void Init(){}
 	void PreUpdate(){}
 	void Update();
-	void PostUpdate();
 	void PreDraw();
 	void Draw();
-	void DrawDebug();
 	void DrawSprite();
 	void Release();
-
-	// ECS
-	void AddEntity(const std::shared_ptr<Entity>& entity);
-	void RemoveEntity(const std::shared_ptr<Entity>& entity);
-	const std::vector<std::shared_ptr<Entity>>& GetEntityList() const { return m_entityList; }
-	void ClearEntities();
 
 	// シーン
 	using SceneFactory = std::function<std::shared_ptr<Scene>()>;
@@ -36,8 +28,6 @@ public:
 private:
 	SceneManager() {}
 	~SceneManager() { Release(); }
-
-	std::vector<std::shared_ptr<Entity>> m_entityList;
 
 	std::unordered_map<std::string, SceneFactory> m_sceneRegistry;
 	std::shared_ptr<Scene> m_currentScene = nullptr;

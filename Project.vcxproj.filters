@@ -441,6 +441,9 @@
     <ClInclude Include="Src\Engine\Components\Action\Player\ActionPlayerComponent.h">
       <Filter>Src\Engine\Components\Action\Player</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Engine\ECS\EntityManager.h">
+      <Filter>Src\Engine\ECS</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -658,6 +661,9 @@
     </ClCompile>
     <ClCompile Include="Src\Engine\Components\Action\Player\ActionPlayerComponent.cpp">
       <Filter>Src\Engine\Components\Action\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Engine\ECS\EntityManager.cpp">
+      <Filter>Src\Engine\ECS</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

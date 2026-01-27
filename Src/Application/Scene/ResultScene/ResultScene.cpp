@@ -1,7 +1,4 @@
 ﻿#include "ResultScene.h"
-#include "../../../Engine/Core/Engine.h"
-#include "../../../Engine/ECS/Entity.h"
-#include "../../../Engine/Components/TransformComponent.h"
 #include "../../../Engine/Scene/SceneManager.h"
 
 void ResultScene::Init()

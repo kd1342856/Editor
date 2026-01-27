@@ -4,9 +4,9 @@ struct Job
 {
 	enum class Priority
 	{
-		Low,
+		High,
 		Normal,
-		High
+		Low
 	};
 
 	// 実行する関数

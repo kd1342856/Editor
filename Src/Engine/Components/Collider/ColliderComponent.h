@@ -1,7 +1,4 @@
 ﻿#pragma once
-#include "../ECS/Component.h"
-#include "../ECS/Entity.h"
-#include "../../Framework/Math/KdCollider.h"
 
 class ColliderComponent : public Component
 {

@@ -1,6 +1,4 @@
-#pragma once
-
-#include "../ECS/Component.h"
+﻿#pragma once
 
 class TransformComponent : public Component
 {

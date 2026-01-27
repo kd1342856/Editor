@@ -5,6 +5,7 @@
 #include "Thread/Asset/AsyncAssetLoader.h"
 #include "Thread/Profiler/Profiler.h"
 #include "../../Application/main.h"
+#include "../ECS/EntityManager.h"
 
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_  HINSTANCE, _In_ LPSTR, _In_ int)
 {
@@ -158,7 +159,7 @@ void Engine::Execute()
 		m_window.ProcessMessage();
 		if (!m_window.IsCreated()) break;
 
-		if (GetAsyncKeyState(VK_ESCAPE))
+		if (GetAsyncKeyState(VK_ESCAPE)&0x0001)
 		{
 			if (MessageBoxA(m_window.GetWndHandle(), "Quit?", "Confirm", MB_YESNO) == IDYES)
 			{
@@ -205,13 +206,13 @@ void Engine::Release()
 {
 	if (m_isReleased) return;
 
+	AsyncAssetLoader::Instance().Release();
+	ThreadManager::Instance().Release();
 	SceneManager::Instance().Release();
 	ImGuiManager::Instance().GuiRelease();
 	KdShaderManager::Instance().Release();
 	KdAudioManager::Instance().Release();
 	KdDirect3D::Instance().Release();
-	AsyncAssetLoader::Instance().Release();
-	ThreadManager::Instance().Release();
 	m_window.Release();
 
 	m_isReleased = true;
@@ -227,13 +228,13 @@ void Engine::KdBeginUpdate()
 
 	// 空間環境の更新
 	KdShaderManager::Instance().WorkAmbientController().Update();
-	KdShaderManager::Instance().WorkAmbientController().Update();
 }
 
 void Engine::KdPostUpdate()
 {
 	// 3DSoundListnerの行列を更新
 	KdAudioManager::Instance().SetListnerMatrix(KdShaderManager::Instance().GetCameraCB().mView.Invert());
+	EntityManager::Instance().PostUpdate();
 }
 
 void Engine::KdBeginDraw(bool usePostProcess)
@@ -254,36 +255,35 @@ void Engine::KdPostDraw()
 
 void Engine::PreUpdate()
 {
-	KdInputManager::Instance().Update();
-	KdShaderManager::Instance().WorkAmbientController().Update();
 }
 
 void Engine::Update()
 {
 	PROFILE_FUNCTION();
 	SceneManager::Instance().Update();
+	EntityManager::Instance().Update();
 }
 
 void Engine::PostUpdate()
 {
-	KdAudioManager::Instance().SetListnerMatrix(KdShaderManager::Instance().GetCameraCB().mView.Invert());
-	SceneManager::Instance().PostUpdate();
+	EntityManager::Instance().PostUpdate();
 }
 
 void Engine::PreDraw()
 {
-	SceneManager::Instance().PreDraw();
+	EntityManager::Instance().PreDraw();
 }
 
 void Engine::Draw()
 {
 	PROFILE_FUNCTION();
 	SceneManager::Instance().Draw();
+	EntityManager::Instance().Draw();
 }
 
 void Engine::DrawSprite()
 {
-	SceneManager::Instance().DrawSprite();
+	EntityManager::Instance().DrawSprite();
 }
 
 void Engine::PostDraw()

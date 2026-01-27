@@ -1,7 +1,5 @@
 ﻿#include "TitleScene.h"
 #include "../../../Engine/Scene/Scene.h"
-#include "../../../Engine/ECS/Entity.h"
-#include "../../../Engine/Components/TransformComponent.h"
 #include "../../../Engine/Scene/SceneManager.h"
 
 void TitleScene::Init()

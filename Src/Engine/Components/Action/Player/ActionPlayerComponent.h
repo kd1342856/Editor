@@ -1,5 +1,4 @@
-#pragma once
-#include "../ECS/Component.h"
+﻿#pragma once
 
 // プレイヤーの操作・挙動を管理するコンポーネント
 class ActionPlayerComponent : public Component

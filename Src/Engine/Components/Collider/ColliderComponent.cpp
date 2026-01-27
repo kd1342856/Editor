@@ -1,7 +1,4 @@
 ﻿#include "ColliderComponent.h"
-#include "../ECS/Entity.h"
-#include "RenderComponent.h" // Access sibling RenderComponent
-#include "../../Framework/Utility/KdDebug/KdDebugWireFrame.h"
 
 void ColliderComponent::Init()
 {

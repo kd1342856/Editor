@@ -2,6 +2,7 @@
 
 void Entity::Init()
 {
+	m_initialized = true;
 	for (auto& [type, comp] : m_components)
 	{
 		comp->Init();

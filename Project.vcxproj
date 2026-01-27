@@ -297,6 +297,7 @@
     <ClInclude Include="Src\Engine\Core\Thread\ThreadManager.h" />
     <ClInclude Include="Src\Engine\ECS\Component.h" />
     <ClInclude Include="Src\Engine\ECS\Entity.h" />
+    <ClInclude Include="Src\Engine\ECS\EntityManager.h" />
     <ClInclude Include="Src\Engine\EnginePch.h" />
     <ClInclude Include="Src\Engine\ImGui\Debug\Animation\ImGuiAnimeDebug.h" />
     <ClInclude Include="Src\Engine\ImGui\Editor\Command\CmdTransform.h" />
@@ -379,6 +380,7 @@
     <ClCompile Include="Src\Engine\Core\Thread\Profiler\Profiler.cpp" />
     <ClCompile Include="Src\Engine\Core\Thread\ThreadManager.cpp" />
     <ClCompile Include="Src\Engine\ECS\Entity.cpp" />
+    <ClCompile Include="Src\Engine\ECS\EntityManager.cpp" />
     <ClCompile Include="Src\Engine\ImGui\Debug\Animation\ImGuiAnimeDebug.cpp" />
     <ClCompile Include="Src\Engine\ImGui\Editor\EditorCamera\EditorCamera.cpp" />
     <ClCompile Include="Src\Engine\ImGui\Editor\EditorManager.cpp" />

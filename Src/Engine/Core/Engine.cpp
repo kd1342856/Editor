@@ -6,6 +6,7 @@
 #include "Thread/Profiler/Profiler.h"
 #include "../../Application/main.h"
 #include "../ECS/EntityManager.h"
+#include "../Render/Renderer.h"
 
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_  HINSTANCE, _In_ LPSTR, _In_ int)
 {
@@ -278,12 +279,12 @@ void Engine::Draw()
 {
 	PROFILE_FUNCTION();
 	SceneManager::Instance().Draw();
-	EntityManager::Instance().Draw();
+	Renderer::Instance().Draw();
 }
 
 void Engine::DrawSprite()
 {
-	EntityManager::Instance().DrawSprite();
+	Renderer::Instance().DrawSprite();
 }
 
 void Engine::PostDraw()

@@ -24,44 +24,31 @@ void EntityManager::PreDraw()
 	}
 }
 
-void EntityManager::Draw()
-{
-	KdShaderManager::Instance().m_StandardShader.BeginLit();
-	for (auto& entity : m_entityList)
-	{
-		entity->DrawLit();
-	}
-	KdShaderManager::Instance().m_StandardShader.EndLit();
-
-	KdShaderManager::Instance().m_StandardShader.BeginUnLit();
-	for (auto& entity : m_entityList)
-	{
-		entity->DrawUnLit();
-	}
-	KdShaderManager::Instance().m_StandardShader.EndUnLit();
-
-	DrawDebug();
-}
-
-void EntityManager::DrawDebug()
-{
-	for (auto& entity : m_entityList)
-	{
-		entity->DrawDebug();
-	}
-}
-
-void EntityManager::DrawSprite()
-{
-	for (auto& entity : m_entityList)
-	{
-		entity->DrawSprite();
-	}
-}
-
 void EntityManager::Release()
 {
 	ClearEntities();
+}
+
+void EntityManager::InitEntities()
+{
+	for (auto& entity : m_entityList)
+	{
+		if (entity)
+		{
+			entity->Init();
+		}
+	}
+}
+
+void EntityManager::ActivateEntities()
+{
+	for (auto& entity : m_entityList)
+	{
+		if (entity)
+		{
+			entity->Activate();
+		}
+	}
 }
 
 void EntityManager::AddEntity(const std::shared_ptr<Entity>& entity)

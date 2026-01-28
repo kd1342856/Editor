@@ -2,11 +2,12 @@
 
 void Entity::Init()
 {
-	m_initialized = true;
+	if (m_state != State::Constructed) return;
 	for (auto& [type, comp] : m_components)
 	{
 		comp->Init();
 	}
+	m_state = State::Initialized;
 }
 
 void Entity::Update()
@@ -17,6 +18,16 @@ void Entity::Update()
 		if (!comp->IsEnable()) continue;
 		comp->Update();
 	}
+}
+
+void Entity::Activate()
+{
+	if (m_state == State::Active) return;
+	if (m_state == State::Constructed)
+	{
+		Init();
+	}
+	m_state = State::Active;
 }
 
 void Entity::PostUpdate()

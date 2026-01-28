@@ -1,5 +1,4 @@
 ﻿#include "EditorManager.h"
-#include "EditorUI/EditorUI.h" 
 #include "../../Scene/SceneManager.h"
 #include "../../Core/Thread/Profiler/Profiler.h"
 #include "File/ImGuiFileBrowser.h"
@@ -14,7 +13,7 @@ void EditorManager::Init()
 {
 	// ゲームビュー用レンダーターゲット作成 
 	m_gameRT.CreateRenderTarget(1280, 720, true, DXGI_FORMAT_R8G8B8A8_UNORM);
-	m_gameRT.ClearTexture(Math::Color(0, 0, 0, 1)); // 黒でクリア
+	m_gameRT.ClearTexture();
 
     // エディタカメラ
     m_editorCamera = std::make_shared<EditorCamera>();
@@ -104,6 +103,7 @@ void EditorManager::DrawHierarchy()
                 entity->AddComponent(std::make_shared<TransformComponent>());
                 entity->Init();
                 EntityManager::Instance().AddEntity(entity);
+				entity->Activate();
             }
 
 			ImGui::Separator();

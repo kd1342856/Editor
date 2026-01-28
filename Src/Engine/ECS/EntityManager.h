@@ -7,11 +7,10 @@ public:
 	void Update();
 	void PostUpdate();
 	void PreDraw();
-	void Draw();
-	void DrawDebug();
-	void DrawSprite();
 	void Release();
 
+	void InitEntities();
+	void ActivateEntities();
 	void AddEntity(const std::shared_ptr<Entity>& entity);
 	void RemoveEntity(const std::shared_ptr<Entity>& entity);
 	void ClearEntities();

@@ -30,18 +30,13 @@ void SceneManager::Update()
 		{
 			m_currentScene->Init();
 		}
+		EntityManager::Instance().InitEntities();
+		EntityManager::Instance().ActivateEntities();
 		m_nextSceneName.clear();
 	}
 
 	// Logic Update
 	if (m_currentScene) m_currentScene->Update();
-
-
-}
-
-void SceneManager::PostUpdate()
-{
-	EntityManager::Instance().PostUpdate();
 }
 
 void SceneManager::PreDraw()
@@ -53,7 +48,6 @@ void SceneManager::Draw()
 {
 	if (m_currentScene) m_currentScene->Draw();
 	EntityManager::Instance().Draw();
-	EntityManager::Instance().DrawDebug();
 }
 
 void SceneManager::DrawSprite()

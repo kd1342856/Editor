@@ -17,7 +17,6 @@ namespace EditorPanels
 				if (!entity) continue;
 				
 				ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Leaf;
-				// if (editor.GetSelectedIndex() == i) flags |= ImGuiTreeNodeFlags_Selected;
 
 				if (ImGui::TreeNodeEx(entity->GetName().c_str(), flags))
 				{

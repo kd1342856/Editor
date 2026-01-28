@@ -4,6 +4,13 @@
 class Entity : public std::enable_shared_from_this<Entity>
 {
 public:
+	enum class State : uint8_t
+	{
+		Constructed,
+		Initialized,
+		Active,
+	};
+
 	enum class VisibilityFlags : uint8_t
 	{
 		None   = 0,
@@ -18,6 +25,7 @@ public:
 
 	virtual void Init();
 	virtual void Update();
+	virtual void Activate();
 	virtual void PostUpdate();
 	virtual void PreDraw();
 	virtual void DrawLit();
@@ -28,14 +36,17 @@ public:
 	virtual void DrawInspector();
 	virtual void DrawDebug();
 
-	void SetName(const std::string& name) { m_name = name; }
-	const std::string& GetName() const { return m_name; }
+	void SetName(const std::string& name)	 { m_name = name; }
+	const std::string& GetName() const		 { return m_name; }
 
-	void SetVisible(bool visible) { m_visible = visible; }
-	bool IsVisible() const { return m_visible; }
+	void SetVisible(bool visible)			 { m_visible = visible; }
+	bool IsVisible() const					 { return m_visible; }
 
 	void SetVisibility(VisibilityFlags flag, bool enabled);
 	bool IsVisible(VisibilityFlags flag) const;
+
+	bool IsInitialized() const				  { return m_state != State::Constructed; }
+	bool IsActive()		 const				  { return m_state == State::Active; }
 
 	template <typename T>
 	void AddComponent(const std::shared_ptr<T>& component);
@@ -54,6 +65,7 @@ private:
 	bool m_visible		= true;
 
 	uint8_t m_visibilityFlags = static_cast<uint8_t>(VisibilityFlags::Lit) | static_cast<uint8_t>(VisibilityFlags::UnLit) | static_cast<uint8_t>(VisibilityFlags::Shadow);
+	State m_state = State::Constructed;
 
 	std::unordered_map<std::type_index, std::shared_ptr<Component>> m_components;
 };
@@ -65,8 +77,11 @@ void Entity::AddComponent(const std::shared_ptr<T>& component)
 	if (!component) return;
 
 	component->SetOwner(shared_from_this());
-	if (m_initialized) component->Init();
 	m_components[std::type_index(typeid(T))] = component;
+	if (IsInitialized())
+	{
+		component->Init();
+	}
 }
 
 template <typename T>

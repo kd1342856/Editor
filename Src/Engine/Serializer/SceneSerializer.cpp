@@ -154,7 +154,6 @@ bool SceneSerializer::Load(const std::string& filepath,
 		for (auto& eJson : sceneJson["Entities"])
 		{
 			std::shared_ptr<Entity> newEntity = std::make_shared<Entity>();
-			newEntity->Init(); // 基本初期化
 
 			// 名前
 			if (eJson.contains("Name")) newEntity->SetName(eJson["Name"]);

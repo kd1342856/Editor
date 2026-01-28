@@ -166,6 +166,9 @@
     <Filter Include="Src\Engine\Components\Render">
       <UniqueIdentifier>{796ae7d4-cbe6-4442-85b9-2c7571460743}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Engine\Render">
+      <UniqueIdentifier>{14007725-0cd5-4e01-867e-671a8bfdb052}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -345,9 +348,6 @@
     <ClInclude Include="Src\Engine\ImGui\Editor\EditorMode.h">
       <Filter>Src\Engine\ImGui\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Engine\ImGui\Editor\EditorUI\EditorUI.h">
-      <Filter>Src\Engine\ImGui\Editor\EditorUI</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Engine\ImGui\Editor\EditorScene\EditorScene.h">
       <Filter>Src\Engine\ImGui\Editor\EditorScene</Filter>
     </ClInclude>
@@ -356,12 +356,6 @@
     </ClInclude>
     <ClInclude Include="Src\Engine\ImGui\Debug\Animation\ImGuiAnimeDebug.h">
       <Filter>Src\Engine\ImGui\Debug\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Engine\ImGui\Editor\EditorUI\Panels\MainMenuBar.h">
-      <Filter>Src\Engine\ImGui\Editor\EditorUI\Panels</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Engine\ImGui\Editor\EditorUI\Panels\SceneViewPanel.h">
-      <Filter>Src\Engine\ImGui\Editor\EditorUI\Panels</Filter>
     </ClInclude>
     <ClInclude Include="Src\Engine\Serializer\SceneSerializer.h">
       <Filter>Src\Engine\Serializer</Filter>
@@ -443,6 +437,15 @@
     </ClInclude>
     <ClInclude Include="Src\Engine\ECS\EntityManager.h">
       <Filter>Src\Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\ImGui\Editor\EditorUI\Panels\HierarchyPanel.h">
+      <Filter>Src\Engine\ImGui\Editor\EditorUI\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\ImGui\Editor\EditorUI\Panels\InspectorPanel.h">
+      <Filter>Src\Engine\ImGui\Editor\EditorUI\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\Render\Renderer.h">
+      <Filter>Src\Engine\Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -584,9 +587,6 @@
     <ClCompile Include="Src\Engine\ImGui\Editor\EditorManager.cpp">
       <Filter>Src\Engine\ImGui\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Engine\ImGui\Editor\EditorUI\EditorUI.cpp">
-      <Filter>Src\Engine\ImGui\Editor\EditorUI</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Engine\ImGui\Editor\EditorScene\EditorScene.cpp">
       <Filter>Src\Engine\ImGui\Editor\EditorScene</Filter>
     </ClCompile>
@@ -595,12 +595,6 @@
     </ClCompile>
     <ClCompile Include="Src\Engine\ImGui\Debug\Animation\ImGuiAnimeDebug.cpp">
       <Filter>Src\Engine\ImGui\Debug\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Engine\ImGui\Editor\EditorUI\Panels\MainMenuBar.cpp">
-      <Filter>Src\Engine\ImGui\Editor\EditorUI\Panels</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Engine\ImGui\Editor\EditorUI\Panels\SceneViewPanel.cpp">
-      <Filter>Src\Engine\ImGui\Editor\EditorUI\Panels</Filter>
     </ClCompile>
     <ClCompile Include="Src\Engine\Serializer\SceneSerializer.cpp">
       <Filter>Src\Engine\Serializer</Filter>
@@ -664,6 +658,15 @@
     </ClCompile>
     <ClCompile Include="Src\Engine\ECS\EntityManager.cpp">
       <Filter>Src\Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Engine\ImGui\Editor\EditorUI\Panels\HierarchyPanel.cpp">
+      <Filter>Src\Engine\ImGui\Editor\EditorUI\Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Engine\ImGui\Editor\EditorUI\Panels\InspectorPanel.cpp">
+      <Filter>Src\Engine\ImGui\Editor\EditorUI\Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Engine\Render\Renderer.cpp">
+      <Filter>Src\Engine\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -14,6 +14,8 @@ public:
 	void AddEntity(const std::shared_ptr<Entity>& entity);
 	void RemoveEntity(const std::shared_ptr<Entity>& entity);
 	void ClearEntities();
+	void ProcessPendingUpdates();
+
 	const std::vector<std::shared_ptr<Entity>>& GetEntityList() const { return m_entityList; }
 
 private:
@@ -21,6 +23,8 @@ private:
 	~EntityManager() { Release(); }
 
 	std::vector<std::shared_ptr<Entity>> m_entityList;
+	std::vector<std::shared_ptr<Entity>> m_pendingAddList;
+	std::vector<std::shared_ptr<Entity>> m_pendingRemoveList;
 
 public:
 	static EntityManager& Instance()

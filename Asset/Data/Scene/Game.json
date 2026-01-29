@@ -6,8 +6,8 @@
             0.0
         ],
         "Rotation": [
-            46.80000305175781,
-            -88.20001220703125,
+            55.39999771118164,
+            -74.4000015258789,
             0.0
         ]
     },
@@ -35,17 +35,17 @@
             "Name": "London",
             "Render": {
                 "IsDynamic": false,
-                "ModelPath": "Asset/Models/Stage/London/london_white_city_gltf/scene.gltf"
+                "ModelPath": "Asset\\Models\\Stage\\London\\london_white_city_gltf\\scene.gltf"
             },
             "Transform": {
                 "Position": [
                     0.0,
-                    -3.725290298461914e-09,
+                    0.0,
                     0.0
                 ],
                 "Rotation": [
                     0.0,
-                    -0.0,
+                    0.0,
                     0.0
                 ],
                 "Scale": [
@@ -56,6 +56,11 @@
             }
         },
         {
+            "ActionPlayer": {
+                "Gravity": 0.30000001192092896,
+                "JumpPower": 8.0,
+                "Speed": 5.0
+            },
             "Collider": {
                 "BoxExtents": [
                     0.5,
@@ -78,7 +83,7 @@
             "Name": "Player",
             "Render": {
                 "IsDynamic": true,
-                "ModelPath": "Asset/Models/Character/SkinMeshMan/SkinMeshMan.gltf"
+                "ModelPath": "Asset\\Models\\Character\\SkinMeshMan\\SkinMeshMan.gltf"
             },
             "Transform": {
                 "Position": [

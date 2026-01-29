@@ -145,3 +145,18 @@ void Entity::DrawDebug()
 		comp->DrawDebug();
 	}
 }
+
+// Dynamic AddComponent implementation
+void Entity::AddComponent(const std::shared_ptr<Component>& component)
+{
+	if (!component) return;
+
+	component->SetOwner(shared_from_this());
+	// Using typeid(*component) gets the runtime type of the object
+	m_components[std::type_index(typeid(*component))] = component;
+	
+	if (IsInitialized())
+	{
+		component->Init();
+	}
+}

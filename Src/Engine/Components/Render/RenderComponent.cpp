@@ -1,5 +1,7 @@
 ﻿#include "RenderComponent.h"
 
+using json = nlohmann::json;
+
 void RenderComponent::Init()
 {
 }
@@ -52,5 +54,28 @@ void RenderComponent::SetModel(const std::string& filePath)
 	{
 		m_modelWork = std::make_shared<KdModelWork>();
 		m_modelWork->SetModelData(m_modelData);
+	}
+}
+
+void RenderComponent::Serialize(json& j) const
+{
+	j = json{
+		{ "ModelPath", m_filePath },
+		{ "IsDynamic", m_isDynamic }
+	};
+}
+
+void RenderComponent::Deserialize(const json& j)
+{
+	std::string path = j.value("ModelPath", "");
+	bool isDynamic   = j.value("IsDynamic", false);
+
+	if (isDynamic)
+	{
+		SetModelWork(path);
+	}
+	else
+	{
+		SetModelData(path);
 	}
 }

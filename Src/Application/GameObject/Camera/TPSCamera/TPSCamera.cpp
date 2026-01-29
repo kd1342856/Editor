@@ -1,5 +1,5 @@
 ﻿#include "TPSCamera.h"
-#include "../../../../Engine/ECS/Entity.h"
+#include "../../../../Engine/ECS/Entity/Entity/Entity.h"
 
 void TPSCamera::Init()
 {

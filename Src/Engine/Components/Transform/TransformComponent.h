@@ -18,6 +18,11 @@ public:
 	// Get World Matrix (Calculated from SRT)
 	const Math::Matrix& GetWorldMatrix();
 
+	void Serialize(nlohmann::json& j) const override;
+	void Deserialize(const nlohmann::json& j) override;
+
+	const char* GetType() const override { return "Transform"; }
+
 private:
 	Math::Vector3 m_position = Math::Vector3::Zero;
 	Math::Vector3 m_rotation = Math::Vector3::Zero; // Degrees

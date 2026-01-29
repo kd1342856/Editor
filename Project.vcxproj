@@ -295,9 +295,10 @@
     <ClInclude Include="Src\Engine\Core\Thread\Asset\AsyncAssetLoader.h" />
     <ClInclude Include="Src\Engine\Core\Thread\Profiler\Profiler.h" />
     <ClInclude Include="Src\Engine\Core\Thread\ThreadManager.h" />
-    <ClInclude Include="Src\Engine\ECS\Component.h" />
-    <ClInclude Include="Src\Engine\ECS\Entity.h" />
-    <ClInclude Include="Src\Engine\ECS\EntityManager.h" />
+    <ClInclude Include="Src\Engine\ECS\Component\Component.h" />
+    <ClInclude Include="Src\Engine\ECS\Component\Factory\ComponentFactory.h" />
+    <ClInclude Include="Src\Engine\ECS\Entity\EntityManager.h" />
+    <ClInclude Include="Src\Engine\ECS\Entity\Entity\Entity.h" />
     <ClInclude Include="Src\Engine\EnginePch.h" />
     <ClInclude Include="Src\Engine\ImGui\Debug\Animation\ImGuiAnimeDebug.h" />
     <ClInclude Include="Src\Engine\ImGui\Editor\Command\CmdTransform.h" />
@@ -313,8 +314,10 @@
     <ClInclude Include="Src\Engine\ImGui\ImGuiManager.h" />
     <ClInclude Include="Src\Engine\ImGui\Log\Logger.h" />
     <ClInclude Include="Src\Engine\Render\Renderer.h" />
+    <ClInclude Include="Src\Engine\Render\RenderSystem.h" />
     <ClInclude Include="Src\Engine\Scene\Scene.h" />
     <ClInclude Include="Src\Engine\Scene\SceneManager.h" />
+    <ClInclude Include="Src\Engine\Serializer\JsonUtils.h" />
     <ClInclude Include="Src\Engine\Serializer\SceneSerializer.h" />
     <ClInclude Include="Src\Framework\Direct3D\KdMaterial.h" />
     <ClInclude Include="Src\Framework\Direct3D\Polygon\KdPolygon.h" />
@@ -379,8 +382,9 @@
     <ClCompile Include="Src\Engine\Core\Thread\Asset\AsyncAssetLoader.cpp" />
     <ClCompile Include="Src\Engine\Core\Thread\Profiler\Profiler.cpp" />
     <ClCompile Include="Src\Engine\Core\Thread\ThreadManager.cpp" />
-    <ClCompile Include="Src\Engine\ECS\Entity.cpp" />
-    <ClCompile Include="Src\Engine\ECS\EntityManager.cpp" />
+    <ClCompile Include="Src\Engine\ECS\Component\Factory\ComponentFactory.cpp" />
+    <ClCompile Include="Src\Engine\ECS\Entity\EntityManager.cpp" />
+    <ClCompile Include="Src\Engine\ECS\Entity\Entity\Entity.cpp" />
     <ClCompile Include="Src\Engine\ImGui\Debug\Animation\ImGuiAnimeDebug.cpp" />
     <ClCompile Include="Src\Engine\ImGui\Editor\EditorCamera\EditorCamera.cpp" />
     <ClCompile Include="Src\Engine\ImGui\Editor\EditorManager.cpp" />
@@ -391,6 +395,7 @@
     <ClCompile Include="Src\Engine\ImGui\ImGuiManager.cpp" />
     <ClCompile Include="Src\Engine\ImGui\Log\Logger.cpp" />
     <ClCompile Include="Src\Engine\Render\Renderer.cpp" />
+    <ClCompile Include="Src\Engine\Render\RenderSystem.cpp" />
     <ClCompile Include="Src\Engine\Scene\Scene.cpp" />
     <ClCompile Include="Src\Engine\Scene\SceneManager.cpp" />
     <ClCompile Include="Src\Engine\Serializer\SceneSerializer.cpp" />

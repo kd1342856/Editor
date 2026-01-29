@@ -10,8 +10,8 @@
 
 // Engine
 // ============================================
-#include "ECS/Component.h"
-#include "ECS/Entity.h"
+#include "ECS/Component/Component.h"
+#include "ECS/Entity/Entity/Entity.h"
 
 #include "Components/Render/RenderComponent.h"
 #include "Components/Transform/TransformComponent.h"

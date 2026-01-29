@@ -11,6 +11,12 @@ public:
 	void Update() override;
 	void DrawInspector() override; // パラメータ調整用
 
+	// Serialization
+	void Serialize(nlohmann::json& j) const override;
+	void Deserialize(const nlohmann::json& j) override;
+
+	const char* GetType() const override { return "ActionPlayer"; }
+
 private:
 	// パラメータ
 	float m_speed = 5.0f;       // 移動速度

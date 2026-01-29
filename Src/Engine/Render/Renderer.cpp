@@ -1,5 +1,5 @@
 ﻿#include "Renderer.h"
-#include "../ECS/EntityManager.h"
+#include "../ECS/Entity/EntityManager.h"
 
 void Renderer::Draw()
 {

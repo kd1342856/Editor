@@ -8,7 +8,7 @@ public:
 	// title: ウィンドウタイトル
 	// filters: 拡張子フィルタ ({ ".json", ".txt" } など)
 	// callback: 決定時のコールバック (フルパスが返る)
-	void Open(const std::string& key, const std::string& title, const std::vector<std::string>& filters, std::function<void(const std::string&)> callback);
+	void Open(const std::string& key, const std::string& title, const std::vector<std::string>& filters, std::function<void(const std::string&)> callback, const std::string& startPath = "Asset");
 
 	void Draw();
 

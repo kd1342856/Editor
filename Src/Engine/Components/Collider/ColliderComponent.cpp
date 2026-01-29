@@ -1,4 +1,7 @@
 ﻿#include "ColliderComponent.h"
+#include "../../Serializer/JsonUtils.h"
+
+using json = nlohmann::json;
 
 void ColliderComponent::Init()
 {
@@ -98,4 +101,43 @@ void ColliderComponent::DrawDebug()
     
     // 描画実行
     m_debugWire->Draw();
+}
+
+void ColliderComponent::Serialize(json& j) const
+{
+	j = json{
+		{ "Enable",         m_enable },
+		{ "DebugDraw",      m_debugDraw },
+		{ "CollisionType",  m_collisionType },
+		
+		{ "EnableSphere",   m_enableSphere },
+		{ "SphereRadius",   m_sphereRadius },
+		
+		{ "EnableBox",      m_enableBox },
+		{ "BoxExtents",     m_boxExtents },
+		
+		{ "EnableModel",    m_enableModel },
+		
+		{ "Offset",         m_offset }
+	};
+}
+
+void ColliderComponent::Deserialize(const json& j)
+{
+	// 値取り出し。無ければ初期値(または現状維持)
+	m_enable			= j.value("Enable", m_enable);
+	m_debugDraw			= j.value("DebugDraw", m_debugDraw);
+	m_collisionType		= j.value("CollisionType", m_collisionType);
+
+	m_enableSphere		= j.value("EnableSphere", m_enableSphere);
+	m_sphereRadius		= j.value("SphereRadius", m_sphereRadius);
+
+	m_enableBox			= j.value("EnableBox", m_enableBox);
+	m_boxExtents		= j.value("BoxExtents", m_boxExtents); // Uses JsonUtils
+
+	m_enableModel		= j.value("EnableModel", m_enableModel);
+
+	m_offset			= j.value("Offset", m_offset); // Uses JsonUtils
+
+	m_isDirty = true;
 }

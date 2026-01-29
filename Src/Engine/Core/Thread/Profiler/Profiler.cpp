@@ -80,8 +80,8 @@ void Profiler::DrawProfilerWindow()
 
             // 色分け (ハッシュ)
             std::hash<std::string> hasher;
-            size_t h = hasher(res.m_name);
-            ImU32 col = IM_COL32((h & 0xFF), ((h >> 8) & 0xFF) | 100, ((h >> 16) & 0xFF) | 100, 200);
+            size_t hash = hasher(res.m_name);
+            ImU32 col = IM_COL32((hash & 0xFF), ((hash >> 8) & 0xFF) | 100, ((hash >> 16) & 0xFF) | 100, 200);
 
             ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x0, y0), ImVec2(x1, y1), col);
             

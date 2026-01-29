@@ -1,4 +1,7 @@
 ﻿#include "TransformComponent.h"
+#include "../../Serializer/JsonUtils.h"
+
+using json = nlohmann::json;
 
 const Math::Matrix& TransformComponent::GetWorldMatrix()
 {
@@ -12,4 +15,20 @@ const Math::Matrix& TransformComponent::GetWorldMatrix()
 
 	m_worldMatrix = S * R * T;
 	return m_worldMatrix;
+}
+
+void TransformComponent::Serialize(json& j) const
+{
+	j = json{
+		{ "Position", m_position },
+		{ "Rotation", m_rotation },
+		{ "Scale",    m_scale }
+	};
+}
+
+void TransformComponent::Deserialize(const json& j)
+{
+	m_position = j.value("Position", Math::Vector3::Zero);
+	m_rotation = j.value("Rotation", Math::Vector3::Zero);
+	m_scale    = j.value("Scale",    Math::Vector3::One);
 }

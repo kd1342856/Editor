@@ -14,7 +14,7 @@ void ThreadManager::Init()
 	m_stop = false;
 
 	m_workers.reserve(numThreads);
-	for (unsigned int i = 0; i < numThreads; ++i)
+	for (unsigned int threadIdx = 0; threadIdx < numThreads; ++threadIdx)
 	{
 		m_workers.emplace_back(std::bind(&ThreadManager::WorkerThreadLoop, this));
 	}

@@ -1,27 +1,13 @@
 ﻿#include "SceneSerializer.h"
 #include "../../Application/GameObject/Camera/CameraBase.h"
+#include "JsonUtils.h"
+#include "../ECS/Component/Factory/ComponentFactory.h"
+
+// We don't need individual component headers anymore for loading!
+// But we might need them if we want to explicitly use them for something else, 
+// though the goal is to be generic.
 
 using json = nlohmann::json;
-namespace DirectX 
-{
-	namespace SimpleMath 
-	{
-		void to_json(json& j, const Vector3& v) 
-		{
-			j = json{ v.x, v.y, v.z };
-		}
-		void from_json(const json& j, Vector3& v) 
-		{
-			if (j.is_array() && j.size() >= 3) 
-			{
-				v.x = j[0]; v.y = j[1]; v.z = j[2];
-			}
-			else {
-				v = Vector3::Zero;
-			}
-		}
-	}
-}
 
 // --- Save Implementation ---
 void SceneSerializer::Save(const std::string& filepath, 
@@ -50,45 +36,17 @@ void SceneSerializer::Save(const std::string& filepath,
 		json eJson;
 		eJson["Name"] = entity->GetName();
 
-		// -- Transform (トランスフォーム) --
-		if (entity->HasComponent<TransformComponent>())
+		// Update: Fully Dynamic Serialization
+		// Iterate over all components in the entity
+		for (const auto& [typeIdx, component] : entity->GetAllComponents())
 		{
-			auto tc = entity->GetComponent<TransformComponent>();
-			eJson["Transform"] = {
-				{ "Position", tc->GetPosition() },
-				{ "Rotation", tc->GetRotation() },
-				{ "Scale",    tc->GetScale() }
-			};
-		}
-
-		// -- Render (描画) --
-		if (entity->HasComponent<RenderComponent>())
-		{
-			auto rc = entity->GetComponent<RenderComponent>();
-			eJson["Render"] = 
-			{
-				{ "ModelPath", rc->GetModelPath() },
-				{ "IsDynamic", rc->IsDynamic() }
-			};
-		}
-
-		// -- Collider (衝突判定) --
-		if (entity->HasComponent<ColliderComponent>())
-		{
-			auto collider = entity->GetComponent<ColliderComponent>();
-			eJson["Collider"] = 
-			{
-				{ "Enable",         collider->IsEnable() },
-				{ "DebugDraw",      collider->IsDebugDrawEnabled() },
-				{ "CollisionType",  collider->GetCollisionType() },
-				// 各形状
-				{ "EnableSphere",   collider->GetEnableSphere() },
-				{ "SphereRadius",   collider->GetSphereRadius() },
-				{ "EnableBox",      collider->GetEnableBox() },
-				{ "BoxExtents",     collider->GetBoxExtents() },
-				{ "EnableModel",    collider->GetEnableModel() }, // メッシュコライダー
-				{ "Offset",         collider->GetOffset() }
-			};
+			// Get the type string (key) from the component itself
+			std::string typeName = component->GetType();
+			
+			json compJson;
+			component->Serialize(compJson);
+			
+			eJson[typeName] = compJson;
 		}
 
 		entitiesJson.push_back(eJson);
@@ -110,6 +68,7 @@ void SceneSerializer::Save(const std::string& filepath,
 	}
 }
 
+// --- Load Implementation ---
 bool SceneSerializer::Load(const std::string& filepath, 
 	std::vector	<std::shared_ptr<Entity>>	& outEntities, 
 	std::shared_ptr<CameraBase>				& editorCamera)
@@ -158,59 +117,31 @@ bool SceneSerializer::Load(const std::string& filepath,
 			// 名前
 			if (eJson.contains("Name")) newEntity->SetName(eJson["Name"]);
 
-			// -- Transform (トランスフォーム) --
-			if (eJson.contains("Transform"))
+			// Update: Fully Dynamic Deserialization
+			// Iterate over all JSON keys in the entity object
+			for (auto& [key, value] : eJson.items())
 			{
-				auto trans	= std::make_shared<TransformComponent>();
-				auto& tJson = eJson["Transform"];
-				trans->SetPosition	(tJson.value("Position"	, Math::Vector3::Zero));
-				trans->SetRotation	(tJson.value("Rotation"	, Math::Vector3::Zero));
-				trans->SetScale		(tJson.value("Scale"	, Math::Vector3::One));
-				newEntity->AddComponent(trans);
-			}
+				if (key == "Name") continue; // Skip name
 
-			// -- Render (描画) --
-			if (eJson.contains("Render"))
-			{
-				auto render = std::make_shared<RenderComponent>();
-				auto& rJson = eJson["Render"];
-				
-				std::string path	= rJson.value("ModelPath", "");
-				bool isDynamic		= rJson.value("IsDynamic", false);
-
-				if (isDynamic)
+				// Try to create a component with this key
+				auto component = ComponentFactory::Instance().Create(key);
+				if (component)
 				{
-					render->SetModelWork(path);
+					try 
+					{
+						component->Deserialize(value);
+						newEntity->AddComponent(component);
+					}
+					catch(const std::exception& e)
+					{
+						Logger::Error(std::string("Failed to deserialize component: ") + key + " Error: " + e.what());
+					}
 				}
 				else
 				{
-					render->SetModelData(path);
+					// Unknown component or just extra data, ignore or log warning
+					// Logger::Warning("Unknown component type: " + key);
 				}
-				newEntity->AddComponent(render);
-			}
-
-			// -- Collider (衝突判定) --
-			if (eJson.contains("Collider"))
-			{
-				auto collider = std::make_shared<ColliderComponent>();
-				auto& cJson = eJson["Collider"];
-
-				collider->SetEnable(cJson.value("Enable", true));
-				collider->SetDebugDrawEnabled(cJson.value("DebugDraw", true));
-				collider->SetCollisionType(cJson.value("CollisionType", (UINT)KdCollider::TypeBump));
-				
-				// 各形状
-				collider->SetEnableSphere(cJson.value("EnableSphere", false));
-				collider->SetSphereRadius(cJson.value("SphereRadius", 1.0f));
-				
-				collider->SetEnableBox(cJson.value("EnableBox", false));
-				collider->SetBoxExtents(cJson.value("BoxExtents", Math::Vector3(0.5f)));
-
-				collider->SetEnableModel(cJson.value("EnableModel", false));
-				
-				collider->SetOffset(cJson.value("Offset", Math::Vector3::Zero));
-
-				newEntity->AddComponent(collider);
 			}
 
 			outEntities.push_back(newEntity);

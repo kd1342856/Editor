@@ -1,5 +1,4 @@
-#include "EnginePch.h"
-#include "InspectorPanel.h"
+﻿#include "InspectorPanel.h"
 #include "../../EditorManager.h"
 #include "imgui/imgui.h"
 

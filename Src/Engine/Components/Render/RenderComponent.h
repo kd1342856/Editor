@@ -30,6 +30,11 @@ public:
 	const std::shared_ptr<KdModelWork>& GetModelWork() const { return m_modelWork; }
 	const std::shared_ptr<KdModelData>& GetModelData() const { return m_modelData; }
 
+	void Serialize(nlohmann::json& j) const override;
+	void Deserialize(const nlohmann::json& j) override;
+
+	const char* GetType() const override { return "Render"; }
+
 private:
 	std::shared_ptr<KdModelWork> m_modelWork;
 	std::shared_ptr<KdModelData> m_modelData;

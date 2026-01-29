@@ -1,19 +1,18 @@
 ﻿#include "HierarchyPanel.h"
 #include "../../EditorManager.h"
-#include "../../../../ECS/EntityManager.h"
+#include "../../../../ECS/Entity/EntityManager.h"
 
 namespace EditorPanels
 {
 	void HierarchyPanel::Draw(EditorManager& editor)
 	{
 		ImGui::Begin("Hierarchy");
-		// Temporary List
 		if (ImGui::TreeNode("Entities"))
 		{
 			auto& list = EntityManager::Instance().GetEntityList();
-			for (size_t i = 0; i < list.size(); ++i)
+			for (size_t idx = 0; idx < list.size(); ++idx)
 			{
-				auto& entity = list[i];
+				auto& entity = list[idx];
 				if (!entity) continue;
 				
 				ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Leaf;

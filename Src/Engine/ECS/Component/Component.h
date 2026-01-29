@@ -20,6 +20,12 @@ public:
 	virtual void DrawInspector() {} 
 	virtual void DrawDebug() {}
 
+	virtual void Serialize(nlohmann::json& j) const {}
+	virtual void Deserialize(const nlohmann::json& j) {}
+	
+	// Identifier for Factory and Serialization key
+	virtual const char* GetType() const = 0;
+
 	void SetOwner(const std::shared_ptr<Entity>& owner) { m_owner = owner; }
 	std::shared_ptr<Entity> GetOwner() const { return m_owner.lock(); }
 

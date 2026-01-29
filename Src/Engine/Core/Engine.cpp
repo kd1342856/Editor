@@ -5,37 +5,9 @@
 #include "Thread/Asset/AsyncAssetLoader.h"
 #include "Thread/Profiler/Profiler.h"
 #include "../../Application/main.h"
-#include "../ECS/EntityManager.h"
+#include "../ECS/Entity/EntityManager.h"
 #include "../Render/Renderer.h"
-
-int WINAPI WinMain(_In_ HINSTANCE, _In_opt_  HINSTANCE, _In_ LPSTR, _In_ int)
-{
-	// メモリリークを知らせる
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
-	// COM初期化
-	if (FAILED(CoInitializeEx(nullptr, COINIT_MULTITHREADED)))
-	{
-		CoUninitialize();
-
-		return 0;
-	}
-
-	// mbstowcs_s関数で日本語対応にするために呼ぶ
-	setlocale(LC_ALL, "japanese");
-
-	//===================================================================
-	// 実行
-	//===================================================================
-	// Engine初期化 & 実行
-
-	Engine::Instance().Execute();
-
-	// COM解放
-	CoUninitialize();
-
-	return 0;
-}
+#include "../ECS/Component/Factory/ComponentFactory.h"
 
 bool Engine::Init(int width, int height)
 {
@@ -96,6 +68,9 @@ bool Engine::Init(int width, int height)
 	
 	// 非同期ローダー初期化
 	AsyncAssetLoader::Instance().Init();
+
+	// コンポーネントファクトリ初期化 (これがないとロード時にコンポーネントが生成されない)
+	InitComponentFactory();
 
 	// 非同期テクスチャロードをKdAssetsに登録
 	KdAssets::Instance().m_textures.SetCustomLoader([](const std::string& filename)

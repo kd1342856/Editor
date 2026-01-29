@@ -169,6 +169,18 @@
     <Filter Include="Src\Engine\Render">
       <UniqueIdentifier>{14007725-0cd5-4e01-867e-671a8bfdb052}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Engine\ECS\Component">
+      <UniqueIdentifier>{7fb04f88-209a-4f37-b1b5-f2e684ab613e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Engine\ECS\Entity">
+      <UniqueIdentifier>{65104795-8fa4-4fd2-8955-f26fdd664a50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Engine\ECS\Entity\Entity">
+      <UniqueIdentifier>{5d521157-330a-48c6-b725-5847b60d175e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Engine\ECS\Component\Factory">
+      <UniqueIdentifier>{7bf09031-3c6f-404f-8a8e-7bad4d0aabcd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -327,12 +339,6 @@
     <ClInclude Include="Src\Engine\Scene\SceneManager.h">
       <Filter>Src\Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Engine\ECS\Component.h">
-      <Filter>Src\Engine\ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Engine\ECS\Entity.h">
-      <Filter>Src\Engine\ECS</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Engine\Core\Engine.h">
       <Filter>Src\Engine\Core</Filter>
     </ClInclude>
@@ -435,9 +441,6 @@
     <ClInclude Include="Src\Engine\Components\Action\Player\ActionPlayerComponent.h">
       <Filter>Src\Engine\Components\Action\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Engine\ECS\EntityManager.h">
-      <Filter>Src\Engine\ECS</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Engine\ImGui\Editor\EditorUI\Panels\HierarchyPanel.h">
       <Filter>Src\Engine\ImGui\Editor\EditorUI\Panels</Filter>
     </ClInclude>
@@ -446,6 +449,24 @@
     </ClInclude>
     <ClInclude Include="Src\Engine\Render\Renderer.h">
       <Filter>Src\Engine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\Serializer\JsonUtils.h">
+      <Filter>Src\Engine\Serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\Render\RenderSystem.h">
+      <Filter>Src\Engine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\ECS\Entity\Entity\Entity.h">
+      <Filter>Src\Engine\ECS\Entity\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\ECS\Entity\EntityManager.h">
+      <Filter>Src\Engine\ECS\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\ECS\Component\Component.h">
+      <Filter>Src\Engine\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Engine\ECS\Component\Factory\ComponentFactory.h">
+      <Filter>Src\Engine\ECS\Component\Factory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -572,9 +593,6 @@
     <ClCompile Include="Src\Engine\Scene\SceneManager.cpp">
       <Filter>Src\Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Engine\ECS\Entity.cpp">
-      <Filter>Src\Engine\ECS</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Engine\Core\Engine.cpp">
       <Filter>Src\Engine\Core</Filter>
     </ClCompile>
@@ -656,9 +674,6 @@
     <ClCompile Include="Src\Engine\Components\Action\Player\ActionPlayerComponent.cpp">
       <Filter>Src\Engine\Components\Action\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Engine\ECS\EntityManager.cpp">
-      <Filter>Src\Engine\ECS</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Engine\ImGui\Editor\EditorUI\Panels\HierarchyPanel.cpp">
       <Filter>Src\Engine\ImGui\Editor\EditorUI\Panels</Filter>
     </ClCompile>
@@ -667,6 +682,18 @@
     </ClCompile>
     <ClCompile Include="Src\Engine\Render\Renderer.cpp">
       <Filter>Src\Engine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Engine\Render\RenderSystem.cpp">
+      <Filter>Src\Engine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Engine\ECS\Entity\Entity\Entity.cpp">
+      <Filter>Src\Engine\ECS\Entity\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Engine\ECS\Entity\EntityManager.cpp">
+      <Filter>Src\Engine\ECS\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Engine\ECS\Component\Factory\ComponentFactory.cpp">
+      <Filter>Src\Engine\ECS\Component\Factory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

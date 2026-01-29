@@ -7,7 +7,7 @@
 #include "Command/CommandManager.h"
 #include "Command/CmdTransform.h"
 #include "Command/CommandBase.h"
-#include "../../ECS/EntityManager.h"
+#include "../../ECS/Entity/EntityManager.h"
 
 void EditorManager::Init()
 {
@@ -126,9 +126,9 @@ void EditorManager::DrawHierarchy()
         // エンティティ一覧
         auto displayEntities = entities; 
         
-        for (int i=0; i<displayEntities.size(); ++i)
+        for (int idx=0; idx<displayEntities.size(); ++idx)
         {
-            auto& entity = displayEntities[i];
+            auto& entity = displayEntities[idx];
             
             // ID重複回避のために ##Address を付与
             std::string label = entity->GetName() + "##" + std::to_string((uintptr_t)entity.get());
@@ -629,7 +629,8 @@ void EditorManager::DrawComponentRender(std::shared_ptr<Entity> sel)
 						{
 							render->SetModelData(setPath);
 						}
-                    });
+                    },
+                    "Asset");
             }
 
             // ドラッグ＆ドロップ (ターゲット)
@@ -699,7 +700,8 @@ void EditorManager::DrawComponentRender(std::shared_ptr<Entity> sel)
 						{
 							render->SetModelData(setPath);
 						}
-                    });
+                    },
+                    "Asset");
             }
         }
     }

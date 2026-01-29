@@ -1,7 +1,8 @@
 ﻿#include "SceneManager.h"
 #include "Scene.h"
 #include "../../Application/Scene/BaseScene/BaseScene.h"
-#include "../ECS/EntityManager.h"
+#include "../ECS/Entity/EntityManager.h"
+#include "../Render/RenderSystem.h"
 
 void SceneManager::Update()
 {
@@ -37,6 +38,9 @@ void SceneManager::Update()
 
 	// Logic Update
 	if (m_currentScene) m_currentScene->Update();
+	
+	// Safety: Process Entity additions/removals at the end of frame logic
+	EntityManager::Instance().ProcessPendingUpdates();
 }
 
 void SceneManager::PreDraw()
@@ -46,13 +50,24 @@ void SceneManager::PreDraw()
 
 void SceneManager::Draw()
 {
+	RenderSystem::Instance().BeginFrame();
+
 	if (m_currentScene) m_currentScene->Draw();
-	EntityManager::Instance().Draw();
+	
+	// Collect entities from EntityManager and submit to RenderSystem
+	const auto& entities = EntityManager::Instance().GetEntityList();
+	for (const auto& entity : entities)
+	{
+		RenderSystem::Instance().Submit(entity);
+	}
+
+	RenderSystem::Instance().Execute3D();
 }
 
 void SceneManager::DrawSprite()
 {
-	EntityManager::Instance().DrawSprite();
+	RenderSystem::Instance().ExecuteSprite();
+	RenderSystem::Instance().ExecuteDebug();
 }
 
 void SceneManager::Release()

@@ -57,6 +57,11 @@ public:
 	template <typename T>
 	bool HasComponent() const;
 
+	// Add dynamic component (for Factory)
+	void AddComponent(const std::shared_ptr<Component>& component);
+	
+	const std::unordered_map<std::type_index, std::shared_ptr<Component>>& GetAllComponents() const { return m_components; }
+
 	Math::Matrix GetMatrix() const;
 
 private:

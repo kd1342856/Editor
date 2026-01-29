@@ -55,21 +55,45 @@ void EntityManager::AddEntity(const std::shared_ptr<Entity>& entity)
 {
 	if (entity)
 	{
-		entity->Init();
-		m_entityList.push_back(entity);
+		// Queue for addition
+		m_pendingAddList.push_back(entity);
 	}
 }
 
 void EntityManager::RemoveEntity(const std::shared_ptr<Entity>& entity)
 {
-	auto it = std::remove(m_entityList.begin(), m_entityList.end(), entity);
-	if (it != m_entityList.end())
+	if (entity)
 	{
-		m_entityList.erase(it, m_entityList.end());
+		// Queue for removal
+		m_pendingRemoveList.push_back(entity);
 	}
+}
+
+void EntityManager::ProcessPendingUpdates()
+{
+	// Add pending entities
+	for (const auto& entity : m_pendingAddList)
+	{
+		entity->Init();
+		m_entityList.push_back(entity);
+	}
+	m_pendingAddList.clear();
+
+	// Remove pending entities
+	for (const auto& entity : m_pendingRemoveList)
+	{
+		auto it = std::remove(m_entityList.begin(), m_entityList.end(), entity);
+		if (it != m_entityList.end())
+		{
+			m_entityList.erase(it, m_entityList.end());
+		}
+	}
+	m_pendingRemoveList.clear();
 }
 
 void EntityManager::ClearEntities()
 {
 	m_entityList.clear();
+	m_pendingAddList.clear();
+	m_pendingRemoveList.clear();
 }

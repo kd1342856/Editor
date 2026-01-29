@@ -2,7 +2,7 @@
 #include "../../../Engine/Scene/SceneManager.h"
 #include "../../../Engine/Serializer/SceneSerializer.h"
 #include "../../../Engine/ImGui/Editor/EditorManager.h" 
-#include "../../../Engine/ECS/EntityManager.h"
+#include "../../../Engine/ECS/Entity/EntityManager.h"
 
 void BaseScene::Init()
 {

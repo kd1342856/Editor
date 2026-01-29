@@ -51,8 +51,13 @@ public:
         return false;
     }
 
+	void Serialize(nlohmann::json& j) const override;
+	void Deserialize(const nlohmann::json& j) override;
+
+	const char* GetType() const override { return "Collider"; }
+
 private:
-    void RegisterShape(); 
+	void RegisterShape(); 
 
     std::unique_ptr<KdCollider>			m_collider;
     std::unique_ptr<KdDebugWireFrame>	m_debugWire;

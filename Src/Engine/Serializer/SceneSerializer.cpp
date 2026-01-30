@@ -3,10 +3,6 @@
 #include "JsonUtils.h"
 #include "../ECS/Component/Factory/ComponentFactory.h"
 
-// We don't need individual component headers anymore for loading!
-// But we might need them if we want to explicitly use them for something else, 
-// though the goal is to be generic.
-
 using json = nlohmann::json;
 
 // --- Save Implementation ---
@@ -36,11 +32,8 @@ void SceneSerializer::Save(const std::string& filepath,
 		json eJson;
 		eJson["Name"] = entity->GetName();
 
-		// Update: Fully Dynamic Serialization
-		// Iterate over all components in the entity
 		for (const auto& [typeIdx, component] : entity->GetAllComponents())
 		{
-			// Get the type string (key) from the component itself
 			std::string typeName = component->GetType();
 			
 			json compJson;
@@ -117,8 +110,6 @@ bool SceneSerializer::Load(const std::string& filepath,
 			// 名前
 			if (eJson.contains("Name")) newEntity->SetName(eJson["Name"]);
 
-			// Update: Fully Dynamic Deserialization
-			// Iterate over all JSON keys in the entity object
 			for (auto& [key, value] : eJson.items())
 			{
 				if (key == "Name") continue; // Skip name
@@ -139,11 +130,11 @@ bool SceneSerializer::Load(const std::string& filepath,
 				}
 				else
 				{
-					// Unknown component or just extra data, ignore or log warning
-					// Logger::Warning("Unknown component type: " + key);
+
 				}
 			}
 
+			newEntity->Init();
 			outEntities.push_back(newEntity);
 		}
 	}

@@ -35,6 +35,14 @@ void ImGuiManager::GuiInit()
 	m_isReleased = false;
 }
 
+void ImGuiManager::Update()
+{
+    if (m_editor)
+    {
+        m_editor->Update();
+    }
+}
+
 void ImGuiManager::GuiProcess()
 {
 	if (m_isReleased) return;

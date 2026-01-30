@@ -238,6 +238,7 @@ void Engine::Update()
 	PROFILE_FUNCTION();
 	SceneManager::Instance().Update();
 	EntityManager::Instance().Update();
+    ImGuiManager::Instance().Update();
 }
 
 void Engine::PostUpdate()

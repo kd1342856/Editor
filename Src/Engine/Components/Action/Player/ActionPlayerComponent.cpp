@@ -1,11 +1,31 @@
 ﻿#include "ActionPlayerComponent.h"
+#include "../../../../Application/GameObject/Camera/FPSCamera/FPSCamera.h"
+#include "../../../../Application/GameObject/Camera/TPSCamera/TPSCamera.h"
 
 void ActionPlayerComponent::Init()
 {
+	if (!m_fpsCamera)
+	{
+		m_fpsCamera = std::make_shared<FPSCamera>();
+		m_fpsCamera->Init();
+		m_fpsCamera->SetTarget(GetOwner());
+	}
+	if (!m_tpsCamera)
+	{
+		m_tpsCamera = std::make_shared<TPSCamera>();
+		m_tpsCamera->Init();
+		m_tpsCamera->SetTarget(GetOwner());
+	}
 }
 
 void ActionPlayerComponent::Update()
 {
+	// Lazy Init: Ensure cameras exist even if Init() wasn't called by system
+	if (!m_fpsCamera || !m_tpsCamera)
+	{
+		Init();
+	}
+
     // 所有者の取得
     auto owner = GetOwner();
     if (!owner) return;
@@ -14,55 +34,110 @@ void ActionPlayerComponent::Update()
     auto cTrans = owner->GetComponent<TransformComponent>();
     if (!cTrans) return;
 
-    // ----- 入力処理 (InputManager経由) -----
-	// 軸入力 (WASD / 十字キー)
-	Math::Vector2 inputMove = Math::Vector2::Zero;
-	if (GetAsyncKeyState('W') & 0x8000) inputMove.y += 1.0f;
-	if (GetAsyncKeyState('S') & 0x8000) inputMove.y -= 1.0f;
-	if (GetAsyncKeyState('A') & 0x8000) inputMove.x -= 1.0f;
-	if (GetAsyncKeyState('D') & 0x8000) inputMove.x += 1.0f;
+	// ----- カメラ更新 & モード切替 -----
+	if (m_isCameraActive)
+	{
+		// 切替 (Vキーかつ、Altが押されていない時のみ)
+		// Alt+V は EditorManager でハンドルされるため、単発Vと区別する
+		bool currV   = (GetAsyncKeyState('V')     & 0x8000) != 0;
+		bool currAlt = (GetAsyncKeyState(VK_MENU) & 0x8000) != 0;
 
-    // 正規化
-    if (inputMove.LengthSquared() > 0)
-    {
-        inputMove.Normalize();
-    }
+		if (currV && !m_prevV && !currAlt)
+		{
+			if (m_cameraMode == CameraMode::TPS)
+			{
+				m_cameraMode = CameraMode::FPS;
+			}
+			else
+			{
+				m_cameraMode = CameraMode::TPS;
+			}
+		}
+		m_prevV = currV;
 
-    // カメラの向き基準で移動ベクトルを作成 (とりあえず簡易的にカメラ無視でワールド基準で動かす)
-    // ※後でTPSカメラ対応する
-    Math::Vector3 moveDir = Math::Vector3(inputMove.x, 0, inputMove.y);
+		// カメラ更新 (マウス制御含む)
+		if (GetCamera())
+		{
+			GetCamera()->PostUpdate();
+		}
+	
+	    // ----- 入力処理 (InputManager経由) -----
+		// 軸入力 (WASD / 十字キー)
+		Math::Vector2 inputMove = Math::Vector2::Zero;
+		if (GetAsyncKeyState('W') & 0x8000) inputMove.y += 1.0f;
+		if (GetAsyncKeyState('S') & 0x8000) inputMove.y -= 1.0f;
+		if (GetAsyncKeyState('A') & 0x8000) inputMove.x -= 1.0f;
+		if (GetAsyncKeyState('D') & 0x8000) inputMove.x += 1.0f;
 
-    // ----- 重力処理 -----
-    m_uGravity.y -= m_gravity;
+	    // 正規化
+	    if (inputMove.LengthSquared() > 0)
+	    {
+	        inputMove.Normalize();
+	    }
 
-    // ----- ジャンプ処理 -----
-    if (GetAsyncKeyState(VK_SPACE) & 0x8000)
-    {
-        if (m_isGround)
-        {
-            m_uGravity.y = m_jumpPower;
-            m_isGround = false;
-        }
-    }
+		// カメラの向き基準で移動ベクトルを作成
+		Math::Vector3 moveDir = Math::Vector3::Zero;
+		if (GetCamera())
+		{
+			// カメラのY軸回転行列を取得
+			Math::Matrix funcRotY = GetCamera()->GetRotationYMatrix();
+			Math::Vector3 vX = funcRotY.Right();
+			Math::Vector3 vZ = funcRotY.Backward(); 
+			
+			Math::Vector3 input3D = { inputMove.x, 0, inputMove.y };
+			moveDir = Math::Vector3::TransformNormal(input3D, funcRotY);
+		}
+		else
+		{
+			moveDir = Math::Vector3(inputMove.x, 0, inputMove.y);
+		}
 
-    // ----- 移動適用 -----
-    Math::Vector3 pos = cTrans->GetPosition();
-    pos += moveDir * m_speed * 0.016f; // 簡易DeltaTime
-    pos += m_uGravity * 0.016f;
+	    // ----- 重力処理 -----
+	    m_uGravity.y -= m_gravity;
 
-    // ----- 簡易接地判定 (y <= 0) -----
-    if (pos.y <= 0.0f)
-    {
-        pos.y = 0.0f;
-        m_uGravity.y = 0.0f;
-        m_isGround = true;
-    }
-    else
-    {
-        m_isGround = false;
-    }
+	    // ----- ジャンプ処理 -----
+	    if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+	    {
+	        if (m_isGround)
+	        {
+	            m_uGravity.y = m_jumpPower;
+	            m_isGround = false;
+	        }
+	    }
 
-    cTrans->SetPosition(pos);
+	    // ----- 移動適用 -----
+	    Math::Vector3 pos = cTrans->GetPosition();
+	    pos += moveDir * m_speed * 0.016f; // 簡易DeltaTime
+	    pos += m_uGravity * 0.016f;
+
+	    // ----- 簡易接地判定 (y <= 0) -----
+	    if (pos.y <= 0.0f)
+	    {
+	        pos.y = 0.0f;
+	        m_uGravity.y = 0.0f;
+	        m_isGround = true;
+	    }
+	    else
+	    {
+	        m_isGround = false;
+	    }
+
+	    cTrans->SetPosition(pos);
+		
+		// プレイヤー回転
+		if (inputMove.LengthSquared() > 0)
+		{
+			// 移動方向を向く
+			Math::Vector3 dir = moveDir;
+			dir.y = 0;
+			if (dir.LengthSquared() > 0)
+			{
+				float angle = atan2(dir.x, dir.z); // Z+が前方
+				angle = DirectX::XMConvertToDegrees(angle);
+				cTrans->SetRotation({ 0, angle, 0 });
+			}
+		}
+	}
 }
 
 void ActionPlayerComponent::DrawInspector()
@@ -92,4 +167,10 @@ void ActionPlayerComponent::Deserialize(const nlohmann::json& inJson)
 	m_speed     = inJson.value("Speed", m_speed);
 	m_jumpPower = inJson.value("JumpPower", m_jumpPower);
 	m_gravity   = inJson.value("Gravity", m_gravity);
+}
+
+std::shared_ptr<CameraBase> ActionPlayerComponent::GetCamera() const
+{
+	if (m_cameraMode == CameraMode::FPS) return m_fpsCamera;
+	return m_tpsCamera;
 }

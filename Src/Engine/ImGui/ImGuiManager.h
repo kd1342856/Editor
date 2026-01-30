@@ -12,6 +12,7 @@ public:
 
 	void GuiInit();
 	void GuiProcess();
+    void Update(); // Added Update
 	void GuiRelease();
 
 	void SetMode(EditorMode m);

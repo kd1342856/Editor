@@ -41,9 +41,8 @@ void EditorManager::Update()
 	bool currV   = (GetAsyncKeyState('V')     & 0x8000) != 0;
 
     // Alt + V がそろった瞬間をトリガー
-    // デバッグ用: Pキーでも切り替え可能にする
-    bool currP = (GetAsyncKeyState('P') & 0x8000) != 0;
-    bool currTrigger = (currAlt && currV) || currP;
+    // Alt + V がそろった瞬間をトリガー
+    bool currTrigger = (currAlt && currV);
 
 	if (currTrigger && !m_prevAltV)
 	{

@@ -157,6 +157,9 @@ LRESULT KdWindow::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 		RemoveProp(hWnd, L"GameWindowInstance");
 		PostQuitMessage(0);
 		break;
+    // システムキーのビープ音対策
+    case WM_SYSCHAR:
+        return 0;
 	default:
 		// メッセージのデフォルト処理
 		return DefWindowProc(hWnd, message, wParam, lParam);

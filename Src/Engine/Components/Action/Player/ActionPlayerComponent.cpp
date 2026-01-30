@@ -132,9 +132,27 @@ void ActionPlayerComponent::Update()
 			dir.y = 0;
 			if (dir.LengthSquared() > 0)
 			{
-				float angle = atan2(dir.x, dir.z); // Z+が前方
-				angle = DirectX::XMConvertToDegrees(angle);
-				cTrans->SetRotation({ 0, angle, 0 });
+				// 目標角度
+                float targetAngle = atan2(dir.x, dir.z); // Z+が前方
+				targetAngle = DirectX::XMConvertToDegrees(targetAngle);
+                targetAngle -= 90.0f; // モデルの向き補正
+
+                // 現在の角度
+                float currentAngle = cTrans->GetRotation().y;
+
+                // 角度差を計算 (最短回転方向へ)
+                float diff = targetAngle - currentAngle;
+                
+                // -180～180の範囲に収める (360度ループ対策)
+                while (diff > 180.0f) diff -= 360.0f;
+                while (diff < -180.0f) diff += 360.0f;
+
+                // 補間処理 (ゆっくり回転)
+                // 0.1f 程度でスムーズに。小さいほど遅くなる
+                float lerpFactor = 0.1f; 
+                currentAngle += diff * lerpFactor;
+
+				cTrans->SetRotation({ 0, currentAngle, 0 });
 			}
 		}
 	}
